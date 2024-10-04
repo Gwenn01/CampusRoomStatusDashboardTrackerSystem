@@ -1,0 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+.create-sched-container {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.table-custom {
+  background-color: #f5f5f5;
+  color: #333;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.table-custom th {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.table-custom tr:hover {
+  background-color: #e9ecef;
+}
+.tr-modal {
+  font-size: 14px;
+}
+.scrollable-dropdown {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Optional: Style for the dropdown items */
+.scrollable-dropdown .dropdown-item {
+  white-space: nowrap;
+}

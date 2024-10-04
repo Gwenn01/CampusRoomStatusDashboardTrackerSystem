@@ -1,0 +1,83 @@
+.container-selectuser {
+  height: 100vh;
+  width: 100vw;
+  /*background-image: url("../assets/backg background: linear-gradient(to right, #0d1b2a, #e0e1dd);orund-login.jpg");*/
+  /*background: linear-gradient(to right, #6e5f5d, #ebe5e4);*/
+  background-color: #343a40;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  position: absolute;
+}
+
+.content-selectuser {
+  height: auto;
+  width: 380px;
+  border: 1px solid black;
+  background-color: #d9d7d7;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.content-selectuser img {
+  height: 3.5rem;
+  width: 3.5rem;
+  margin: 1rem 0 0.5rem 0;
+}
+.content-selectuser h2 {
+  font-size: 0.8rem;
+  color: black;
+  text-align: center;
+  margin-bottom: 0%;
+  font-weight: bold;
+}
+.content-selectuser p {
+  font-size: 0.6rem;
+  color: black;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: lighter;
+}
+.content-selectuser .buttons {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.buttons .btn-selectuser {
+  width: 9rem;
+  height: 2rem;
+  font-size: 0.8rem;
+  background-color: #555454;
+  box-shadow: 0 0 5px black;
+  border: none;
+}
+.buttons .btn-selectuser:hover {
+  background-color: #efefef;
+  color: black;
+}
+.btn-selectuser-active {
+  background-color: #efefef;
+  color: black;
+}
+
+@media (min-width: 768px) {
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 400px) {
+}

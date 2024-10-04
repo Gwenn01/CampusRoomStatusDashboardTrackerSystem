@@ -1,0 +1,37 @@
+/* Header */
+.header-container {
+  background-color: #343a40;
+  padding: 1px;
+  text-align: center;
+  color: #ecf0f1;
+  border-bottom: 3px solid white;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.header-container .logout-btn {
+  width: 3rem;
+  height: 2rem;
+  margin-right: 20px;
+  border: 1px solid white;
+  background-color: white;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #757575;
+}
+.header-container .logout-btn img {
+  margin-right: 20px;
+  font-size: 0.8rem;
+  width: 1.2rem;
+  height: 1.2rem;
+}

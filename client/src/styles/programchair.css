@@ -1,0 +1,76 @@
+.container-pg {
+  height: auto;
+  width: 100vw;
+  background-color: #a4b5c4;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  opacity: 0.8;
+  color: black;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  position: relative;
+  padding-top: 3.3rem;
+}
+
+.container-pg .sidebar {
+  grid-column: 1/2;
+  height: calc(100vh - 3.3rem);
+  position: fixed;
+  top: 3.5rem;
+  background-color: #f1f0f0;
+  color: #fff;
+  padding: 20px;
+  border-right: 1px solid #a0acae;
+  box-shadow: 0 0 10px gray;
+  width: 250px;
+}
+
+.container-pg .sidebar .container-sidebarbtns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.container-pg .sidebar .container-sidebarbtns a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.container-pg .sidebar .container-sidebarbtns .btn-sidebar {
+  font-weight: 550;
+  width: 11rem;
+  font-size: 12px;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
+  padding: 0;
+  border: none;
+  padding-left: 0.8rem;
+}
+
+.container-pg .sidebar .container-sidebarbtns .btn-sidebar img {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.container-pg .sidebar .container-sidebarbtns .btn-sidebar span {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.container-pg .content-pg {
+  grid-column: 2/3;
+  padding: 0.3rem;
+  margin-left: 1rem;
+  padding-top: 1rem;
+  padding-right: 2rem;
+}

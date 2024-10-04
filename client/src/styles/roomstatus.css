@@ -1,0 +1,60 @@
+/* General container styling */
+.room-status-container {
+  width: 100%;
+  background-color: #e5e5e5 !important;
+  height: auto;
+  padding: 1rem 2rem;
+}
+
+/* Card styling based on availability */
+.room-card {
+  width: 100%;
+  padding: 0.3rem;
+}
+
+/* Card title styling */
+.room-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Card text styling */
+.room-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Button group styling */
+.button-group {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+/* Action button styling */
+.action-btn {
+  width: 48%;
+  font-size: 0.8rem;
+  padding: 0.4rem;
+}
+
+/* View details button styling */
+.view-btn {
+  width: 100%;
+  font-size: 0.8rem;
+  padding: 0.4rem;
+}
+/*Modal styling*/
+.modal-body table {
+  width: 100%;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+.modal-body th,
+.modal-body td {
+  padding: 10px;
+  text-align: center;
+}

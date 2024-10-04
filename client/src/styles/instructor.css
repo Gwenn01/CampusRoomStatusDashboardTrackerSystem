@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+/* DASHBOARD */
+.custom-btn.btn-dashboard {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 0.6rem;
+  border-radius: 0;
+  background-color: #4a5759;
+  border: none;
+}
+/* ViewSchedule */
+.card-table {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.card-table .table-schedule {
+  font-size: 0.8rem;
+  width: 100%;
+}
+
+.card-table .table-schedule th,
+.card-table .table-schedule td {
+  font-size: 0.6rem;
+  padding: 15px;
+}
+
+.card-table .card {
+  border: none;
+}
+
+.card-table .card-header {
+  font-size: 1.2rem;
+}
+
+.card-table .text-center {
+  color: #333;
+}
+
+.card-table h1,
+.card-table h2 {
+  font-family: "Arial", sans-serif;
+}
