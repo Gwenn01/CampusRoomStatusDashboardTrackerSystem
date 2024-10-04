@@ -64,7 +64,7 @@ const Reports = () => {
                         <td>{report.time_in}</td>
                         <td>{report.time_out}</td>
                         <td>{report.time_count}</td>
-                        <td>{report.date_reports}</td>
+                        <td>{report.date_reports``}</td>
                       </tr>
                     ))
                   ) : (
