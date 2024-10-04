@@ -10,21 +10,25 @@ import vacantIcon from "../../assets/vacant.png";
 import occupiedIcon from "../../assets/occupied.png";
 
 const RoomStatus = () => {
-  // States
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [schedule, setSchedule] = useState([]); // Full schedule data
-  const [filteredSchedule, setFilteredSchedule] = useState([]); // Filtered data
+  const [schedule, setSchedule] = useState([]);
+  const [filteredSchedule, setFilteredSchedule] = useState([]);
   const [rooms, setRooms] = useState([]);
 
-  // Modal states
   const [show, setShow] = useState(false);
-  const [selectedRoomSchedule, setSelectedRoomSchedule] = useState([]); // Selected room's schedule
-  const [selectedDay, setSelectedDay] = useState(""); // Selected day's schedule
-  const [selectedRoomName, setSelectedRoomName] = useState(""); // Selected room name
+  const [selectedRoomSchedule, setSelectedRoomSchedule] = useState([]);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedRoomName, setSelectedRoomName] = useState("");
+
+  // Store time counts in an object where keys are room IDs
+  const [timeCounts, setTimeCounts] = useState(0);
+
+  const [timeIn, setTimeIn] = useState("");
+  const [timeOut, setTimeOut] = useState("");
+  const [dateReports, setDateReports] = useState("");
 
   const handleClose = () => setShow(false);
 
-  // Fetch room data
   const fetchRooms = () => {
     fetch("http://localhost:5000/api/get-rooms")
       .then((response) => response.json())
@@ -36,7 +40,6 @@ const RoomStatus = () => {
     fetchRooms();
   }, []);
 
-  // Fetch schedule data
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
       .then((response) => response.json())
@@ -44,7 +47,6 @@ const RoomStatus = () => {
       .catch((error) => console.error(error));
   }, []);
 
-  // Function to get the current day as a string
   const formatDay = (date) => {
     const options = {
       weekday: "long",
@@ -53,22 +55,36 @@ const RoomStatus = () => {
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
 
-  // Filter the schedule for the current day
   useEffect(() => {
     if (schedule.length > 0) {
       const today = new Date();
-      const dayString = formatDay(today); // Get the current day
-      setSelectedDay(dayString); // Set the selected day to current day
+      const dayString = formatDay(today);
+      setSelectedDay(dayString);
 
       const filterSchedule = schedule.filter(
         (item) => item.day_sched === dayString
       );
-      setFilteredSchedule(filterSchedule); // Update only the filtered schedule
+      setFilteredSchedule(filterSchedule);
     }
-  }, [schedule]); // Runs only when schedule changes
+  }, [schedule]);
 
-  // Handle room status update (In/Out)
-  const handleStatusButton = (room_id, status) => {
+  const handleStatusButton = (room_id, status, action) => {
+    // Update time counts based on the room clicked
+    const updatedTimeCounts = { ...timeCounts };
+
+    if (action === "in") {
+      const timeInValue = new Date().toLocaleTimeString();
+      const dateValue = new Date().toLocaleDateString();
+
+      setTimeIn(timeInValue);
+      setDateReports(dateValue);
+    }
+
+    if (action === "out") {
+      const timeOutValue = new Date().toLocaleTimeString();
+      setTimeOut(timeOutValue);
+    }
+
     fetch(`http://localhost:5000/api/update-room-status`, {
       method: "PUT",
       headers: {
@@ -84,7 +100,7 @@ const RoomStatus = () => {
       })
       .then(() => {
         toast.success("Room status updated successfully");
-        fetchRooms(); // Re-fetch rooms after updating status
+        fetchRooms();
       })
       .catch((error) => {
         console.error(error);
@@ -92,12 +108,11 @@ const RoomStatus = () => {
       });
   };
 
-  // Handle current time and date
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
-    return () => clearInterval(timer); // Cleanup the timer
+    return () => clearInterval(timer);
   }, []);
 
   const formatDate = (date) => {
@@ -122,14 +137,13 @@ const RoomStatus = () => {
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
 
-  // Handle "View Details" click
   const handleShowDetails = (roomName) => {
     const roomSchedule = filteredSchedule.filter(
       (item) => item.room === roomName
     );
 
-    setSelectedRoomSchedule(roomSchedule); // Store the schedule for the selected room
-    setSelectedRoomName(roomName); // Store the room name
+    setSelectedRoomSchedule(roomSchedule);
+    setSelectedRoomName(roomName);
     setShow(true);
   };
 
@@ -165,19 +179,26 @@ const RoomStatus = () => {
                     }
                     alt="room status"
                   />
+                  <span>
+                    {timeCounts[room.id] === undefined
+                      ? ""
+                      : `${timeCounts[room.id]}s`}
+                  </span>
                 </Card.Text>
                 <div className="button-group">
                   <Button
                     variant="success"
                     className="action-btn"
-                    onClick={() => handleStatusButton(room.id, "occupied")}
+                    onClick={() =>
+                      handleStatusButton(room.id, "occupied", "in")
+                    }
                   >
                     In
                   </Button>
                   <Button
                     variant="danger"
                     className="action-btn"
-                    onClick={() => handleStatusButton(room.id, "vacant")}
+                    onClick={() => handleStatusButton(room.id, "vacant", "out")}
                   >
                     Out
                   </Button>
