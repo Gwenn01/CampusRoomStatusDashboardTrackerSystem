@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, Container, Row, Col, Card, Button } from "react-bootstrap";
+import Dropdown from "react-bootstrap/Dropdown";
 import "../../../styles/dashboard.css";
 import { toast } from "react-toastify";
 
 const ViewSchedule = () => {
   const [schedule, setSchedule] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("Select Year");
+  const [selectedSection, setSelectedSection] = useState("Select Section");
+  const [groupedSchedules, setGroupedSchedules] = useState({});
 
   // Function to fetch schedules from the API
   const fetchData = () => {
@@ -21,19 +25,28 @@ const ViewSchedule = () => {
   }, []);
 
   // Group schedules by year and section
-  const groupedSchedules = schedule.reduce((acc, item) => {
-    const year = item.stud_year;
-    const section = item.section;
-    // if there is no year or section, create an empty array for it
-    if (!acc[year]) {
-      acc[year] = {};
-    }
-    if (!acc[year][section]) {
-      acc[year][section] = [];
-    }
-    acc[year][section].push(item);
-    return acc;
-  }, {});
+  const groupTheSchedule = () => {
+    const filterGroupedSchedules = schedule.reduce((acc, item) => {
+      const year = item.stud_year;
+      const section = item.section;
+
+      // if there is no year or section, create an empty array for it
+      if (!acc[year]) {
+        acc[year] = {};
+      }
+      if (!acc[year][section]) {
+        acc[year][section] = [];
+      }
+      acc[year][section].push(item);
+      return acc;
+    }, {});
+
+    setGroupedSchedules(filterGroupedSchedules);
+  };
+
+  useEffect(() => {
+    groupTheSchedule();
+  }, [schedule]);
 
   // Handle delete action
   const handleDelete = (id) => {
@@ -42,13 +55,38 @@ const ViewSchedule = () => {
         method: "DELETE",
       })
         .then(() => {
-          // After deletion, refetch the updated schedule list
           fetchData();
           toast.success("Schedule deleted successfully.");
         })
         .catch((error) => console.error(error));
     }
   };
+
+  // Handle year change
+  const handleYearChange = (eventKey) => {
+    setSelectedYear(eventKey);
+  };
+
+  // Handle section change
+  const handleSectionChange = (eventKey) => {
+    setSelectedSection(eventKey);
+  };
+
+  // Filter schedules based on selected year and section
+  const filteredSchedules = Object.keys(groupedSchedules)
+    .filter((year) => selectedYear === "Select Year" || year === selectedYear)
+    .reduce((acc, year) => {
+      acc[year] = Object.keys(groupedSchedules[year])
+        .filter(
+          (section) =>
+            selectedSection === "Select Section" || section === selectedSection
+        )
+        .reduce((secAcc, section) => {
+          secAcc[section] = groupedSchedules[year][section];
+          return secAcc;
+        }, {});
+      return acc;
+    }, {});
 
   return (
     <Container
@@ -60,13 +98,54 @@ const ViewSchedule = () => {
       <h4 className="text-center mb-4">BS Information Technology Schedule</h4>
       <Row>
         <Col md={10} className="mx-auto">
-          {Object.keys(groupedSchedules).map((year) => (
+          <Row className="mb-4">
+            <Col>
+              <Dropdown onSelect={handleYearChange}>
+                <Dropdown.Toggle
+                  id="dropdown-button-year"
+                  variant="secondary"
+                  className="w-100"
+                >
+                  {selectedYear || "Select Year"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="1stYear">1st Year</Dropdown.Item>
+                  <Dropdown.Item eventKey="2ndYear">2nd Year</Dropdown.Item>
+                  <Dropdown.Item eventKey="3rdYear">3rd Year</Dropdown.Item>
+                  <Dropdown.Item eventKey="4thYear">4th Year</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+
+            <Col>
+              <Dropdown onSelect={handleSectionChange}>
+                <Dropdown.Toggle
+                  id="dropdown-button-section"
+                  variant="secondary"
+                  className="w-100"
+                >
+                  {selectedSection || "Select Section"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="A">Section A</Dropdown.Item>
+                  <Dropdown.Item eventKey="B">Section B</Dropdown.Item>
+                  <Dropdown.Item eventKey="C">Section C</Dropdown.Item>
+                  <Dropdown.Item eventKey="D">Section D</Dropdown.Item>
+                  <Dropdown.Item eventKey="E">Section E</Dropdown.Item>
+                  <Dropdown.Item eventKey="F">Section F</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          </Row>
+
+          {/* Render filtered schedules */}
+          {Object.keys(filteredSchedules).map((year) => (
             <div key={year}>
-              {Object.keys(groupedSchedules[year]).map((section) => (
+              {Object.keys(filteredSchedules[year]).map((section) => (
                 <Card key={section} className="mb-4 shadow-sm card-table">
                   <Card.Header className="bg-primary text-white text-center bg-secondary">
                     <h5 className="mb-0">
-                      {year} Year - Section {section}
+                      Year: {year} Section: {section}
                     </h5>
                   </Card.Header>
                   <Card.Body>
@@ -82,7 +161,7 @@ const ViewSchedule = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {groupedSchedules[year][section].map((item) => (
+                        {filteredSchedules[year][section].map((item) => (
                           <tr key={item.id}>
                             <td>{item.subject_description}</td>
                             <td>{item.time_sched}</td>

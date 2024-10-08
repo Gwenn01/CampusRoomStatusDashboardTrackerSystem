@@ -638,13 +638,29 @@ const CreateSched = () => {
                 {selectedRoom}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {["Room 1", "Room 2", "Room 3", "Room 4", "Room 5"].map(
-                  (room) => (
-                    <Dropdown.Item key={room} eventKey={room}>
-                      {room}
-                    </Dropdown.Item>
-                  )
-                )}
+                {[
+                  "Room 1",
+                  "Room 2",
+                  "Room 3",
+                  "Room 4",
+                  "Room 5",
+                  "Room 6",
+                  "Room 7",
+                  "Room 8",
+                  "Room 9",
+                  "Room 10",
+                  "Room 11",
+                  "Lab 1",
+                  "Lab 2",
+                  "Lab 3",
+                  "Lab 4",
+                  "Lab 5",
+                  "Lab 6",
+                ].map((room) => (
+                  <Dropdown.Item key={room} eventKey={room}>
+                    {room}
+                  </Dropdown.Item>
+                ))}
               </Dropdown.Menu>
             </Dropdown>
           </div>
@@ -687,7 +703,7 @@ const CreateSched = () => {
                 {selectedSection}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {["A", "B", "C", "D"].map((section) => (
+                {["A", "B", "C", "D", "E", "F"].map((section) => (
                   <Dropdown.Item key={section} eventKey={section}>
                     {section}
                   </Dropdown.Item>

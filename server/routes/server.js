@@ -6,6 +6,7 @@ const programchairData = require("./Query/Users/programchairData");
 const curriculumData = require("./Query/Curriculum/curriculumData");
 const insertSchedule = require("./Query/Exam & Schedule/insertSchedule");
 const scheduleData = require("./Query/Exam & Schedule/scheduleData");
+const sheduleDataByYear = require("./Query/Exam & Schedule/getScheduleByYear");
 const editScheduleData = require("./Query/Exam & Schedule/editScheduleData");
 const editSchedule = require("./Query/Exam & Schedule/editSchedule");
 const deleteSchedule = require("./Query/Exam & Schedule/deleteSchedule");
@@ -88,6 +89,27 @@ route.get("/view-schedule", async (req, res) => {
     res.status(200).json(schedule);
   } catch (error) {
     res.statur(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+// get data from schedule table by year
+route.get("/view-schedule/:year", async (req, res) => {
+  try {
+    const year = req.params.year;
+    const resultScheduleByYear = await sheduleDataByYear(year);
+    if (year == "1stYear") {
+      res.status(200).json({ "1st Year": resultScheduleByYear });
+    } else if (year == "2ndYear") {
+      res.status(200).json({ "2nd Year": resultScheduleByYear });
+    } else if (year == "3rdYear") {
+      res.status(200).json({ "3rd Year": resultScheduleByYear });
+    } else if (year == "4thYear") {
+      res.status(200).json({ "4th Year": resultScheduleByYear });
+    }
+  } catch (error) {
+    res.status(500).json({
       error: "An error occurred while fetching data",
       details: error.message,
     });

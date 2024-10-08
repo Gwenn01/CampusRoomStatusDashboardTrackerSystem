@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Table, Container, Row, Col, Card } from "react-bootstrap";
+import Dropdown from "react-bootstrap/Dropdown";
 import "../../../styles/dashboard.css";
 
 const InstructorSchedule = () => {
+  // state variables
   const [schedule, setSchedule] = useState([]);
+  const [groupInstructor, setGroupInstructor] = useState({});
+  const [instructor, setInstructor] = useState([]);
+  const [selectedInstructor, setSelectedInstructor] =
+    useState("Select Instructor");
 
+  // fetching schedule data from database
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
       .then((response) => response.json())
@@ -12,18 +19,42 @@ const InstructorSchedule = () => {
       .catch((error) => console.error(error));
   }, []);
 
+  // fetching instructor data from database (fixed: add dependency array)
+  useEffect(() => {
+    fetch("http://localhost:5000/api/instructor")
+      .then((response) => response.json())
+      .then((data) => setInstructor(data))
+      .catch((error) => console.error(error));
+  }, []);
+
   // Group schedules by instructor
-  const groupedSchedules = schedule.reduce((acc, item) => {
-    const instructor = item.instructor;
+  const groupTheSchedules = () => {
+    const groupedSchedules = schedule.reduce((acc, item) => {
+      const instructor = item.instructor;
+      if (!acc[instructor]) {
+        acc[instructor] = [];
+      }
+      acc[instructor].push(item);
+      return acc;
+    }, {});
+    setGroupInstructor(groupedSchedules);
+  };
 
-    // Initialize instructor if not already present
-    if (!acc[instructor]) {
-      acc[instructor] = [];
-    }
+  // Group schedules whenever schedule changes
+  useEffect(() => {
+    groupTheSchedules();
+  }, [schedule]);
 
-    acc[instructor].push(item);
-    return acc;
-  }, {});
+  // handle the instructor change
+  const handleInstructorChange = (eventKey) => {
+    setSelectedInstructor(eventKey);
+  };
+
+  // filter schedules based on the selected instructor
+  const filteredSchedulesForInstructor =
+    selectedInstructor === "Select Instructor"
+      ? groupInstructor // show all if none is selected
+      : { [selectedInstructor]: groupInstructor[selectedInstructor] }; // filter based on selection
 
   return (
     <Container
@@ -34,7 +65,30 @@ const InstructorSchedule = () => {
       <h1 className="text-center mb-4">Instructor Schedule</h1>
       <Row className="w-100">
         <Col md={10} className="mx-auto">
-          {Object.keys(groupedSchedules).map((instructor) => (
+          <Row className="mb-4">
+            <Col>
+              <Dropdown onSelect={handleInstructorChange}>
+                <Dropdown.Toggle
+                  id="dropdown-button-year"
+                  variant="secondary"
+                  className="w-100"
+                >
+                  {selectedInstructor || "Select Instructor"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {instructor.map((instructor) => (
+                    <Dropdown.Item
+                      key={instructor.instructor_id}
+                      eventKey={instructor.instructor_name}
+                    >
+                      {instructor.instructor_name}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          </Row>
+          {Object.keys(filteredSchedulesForInstructor).map((instructor) => (
             <Card key={instructor} className="mb-4 shadow-sm card-table">
               <Card.Header className="bg-primary text-white text-center bg-secondary">
                 <h5 className="mb-0">{instructor}</h5>
@@ -50,7 +104,7 @@ const InstructorSchedule = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {groupedSchedules[instructor].map((item) => (
+                    {filteredSchedulesForInstructor[instructor].map((item) => (
                       <tr key={item.id}>
                         <td>{item.subject_description}</td>
                         <td>{item.time_sched}</td>
