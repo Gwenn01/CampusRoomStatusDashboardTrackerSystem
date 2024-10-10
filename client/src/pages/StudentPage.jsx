@@ -10,6 +10,10 @@ import dashboard from "../assets/dashboard.png";
 import roomStatus from "../assets/roomstatus.png";
 
 const StudentPage = () => {
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
+
   return (
     <>
       <Header />

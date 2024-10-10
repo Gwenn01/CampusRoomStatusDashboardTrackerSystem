@@ -1,17 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Table, Container, Row, Col, Card } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import "../../../styles/dashboard.css";
 
 const RoomSchedule = () => {
+  // user data
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
+  // shcedule data
   const [schedule, setSchedule] = useState([]);
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/view-schedule")
+  // Function to fetch schedules from the API
+  const fetchData = () => {
+    fetch(
+      `http://localhost:5000/api/view-schedule/${user.course}/${user.year}/${user.section}`
+    )
       .then((response) => response.json())
       .then((data) => setSchedule(data))
       .catch((error) => console.error(error));
-  }, []);
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
   // Group schedules by room
   const groupedSchedules = schedule.reduce((acc, item) => {
     const room = item.room;
@@ -43,8 +55,6 @@ const RoomSchedule = () => {
                     <tr>
                       <th>Subject</th>
                       <th>Instructor</th>
-                      <th>Year</th>
-                      <th>Section</th>
                       <th>Time</th>
                       <th>Day</th>
                     </tr>
@@ -54,8 +64,6 @@ const RoomSchedule = () => {
                       <tr key={item.id}>
                         <td>{item.subject_description}</td>
                         <td>{item.instructor}</td>
-                        <td>{item.stud_year}</td>
-                        <td>{item.section}</td>
                         <td>{item.time_sched}</td>
                         <td>{item.day_sched}</td>
                       </tr>

@@ -6,19 +6,24 @@ import { toast } from "react-toastify";
 
 const ViewExamSchedule = () => {
   // data form user who login
+  const [examschedule, setExamSchedule] = useState([]);
+
+  // Function to fetch the exam schedules
   const location = useLocation();
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
-  // shcdule schedule
-  const [examschedule, setExamschedule] = useState([]);
-
-  // Function to fetch the exam schedules
+  // Function to fetch schedules from the API
   const fetchData = () => {
-    fetch("http://localhost:5000/api/view-exam-schedule")
+    fetch(
+      `http://localhost:5000/api/view-exam-schedule/${user.instructor_name}`
+    )
       .then((response) => response.json())
-      .then((data) => setExamschedule(data))
+      .then((data) => setExamSchedule(data))
       .catch((error) => console.error(error));
   };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // Fetch data when component loads
@@ -66,7 +71,6 @@ const ViewExamSchedule = () => {
                         <tr>
                           <th>Subject</th>
                           <th>Schedule</th>
-                          <th>Instructor</th>
                           <th>Room</th>
                           <th>Day</th>
                         </tr>
@@ -76,7 +80,6 @@ const ViewExamSchedule = () => {
                           <tr key={item.id}>
                             <td>{item.subject_description}</td>
                             <td>{item.time_sched}</td>
-                            <td>{item.instructor}</td>
                             <td>{item.room}</td>
                             <td>{item.day_sched}</td>
                           </tr>

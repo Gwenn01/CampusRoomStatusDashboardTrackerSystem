@@ -5,18 +5,20 @@ import "../../../styles/dashboard.css";
 import { toast } from "react-toastify";
 
 const ViewExamSchedule = () => {
-  // data form user who login
+  // user data
   const location = useLocation();
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
-  // shcdule schedule
-  const [examschedule, setExamschedule] = useState([]);
+  // shcedule data
+  const [examSchedule, setExamSchedule] = useState([]);
 
-  // Function to fetch the exam schedules
+  // Function to fetch schedules from the API
   const fetchData = () => {
-    fetch("http://localhost:5000/api/view-exam-schedule")
+    fetch(
+      `http://localhost:5000/api/view-exam-schedule/${user.course}/${user.year}/${user.section}`
+    )
       .then((response) => response.json())
-      .then((data) => setExamschedule(data))
+      .then((data) => setExamSchedule(data))
       .catch((error) => console.error(error));
   };
 
@@ -26,7 +28,7 @@ const ViewExamSchedule = () => {
   }, []);
 
   // Group schedules by year and section
-  const groupedSchedules = examschedule.reduce((acc, item) => {
+  const groupedSchedules = examSchedule.reduce((acc, item) => {
     const year = item.stud_year;
     const section = item.section;
     // If there's no year or section, create an empty array for it

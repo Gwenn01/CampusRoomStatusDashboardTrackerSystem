@@ -1,4 +1,5 @@
-import React, { useState } from "react"; // Added useState import
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import "../../styles/header.css";
@@ -10,6 +11,12 @@ import Spinner from "../../componets/Spinner";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  // user data
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
+
+  // navigation state
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -22,6 +29,40 @@ const Header = () => {
       setLoading(false);
       navigate("/");
     }, 1000);
+  };
+
+  // Display user-specific data in the header
+  const renderUserInfo = () => {
+    if (user.programchair_id) {
+      // Program Chair
+      return (
+        <div className="user-info">
+          <p>
+            Welcome! {user.programchair_id} {user.programchair_name}
+          </p>
+        </div>
+      );
+    } else if (user.instructor_id) {
+      // Instructor
+      return (
+        <div className="user-info">
+          <p>
+            Welcome! {user.instructor_id} {user.instructor_name}
+          </p>
+        </div>
+      );
+    } else if (user.course) {
+      // Student
+      return (
+        <div className="user-info">
+          <p>
+            {user.course} {user.year} {user.section}
+          </p>
+        </div>
+      );
+    } else {
+      return <p>No user data available</p>;
+    }
   };
 
   return (
@@ -42,13 +83,20 @@ const Header = () => {
           </Navbar.Brand>
         </Container>
       </Navbar>
-      <Button
-        variant="secondary"
-        className="logout-btn"
-        onClick={handleLogout} // Correct function call here
-      >
-        <img src={logout} alt="Logout" />
-      </Button>
+
+      {/* Logout button */}
+      <div className="right-content">
+        {/* User-specific info */}
+        <div className="user-details">{renderUserInfo()}</div>
+        <Button
+          variant="secondary"
+          className="logout-btn"
+          onClick={handleLogout} // Correct function call here
+        >
+          <img src={logout} alt="Logout" />
+        </Button>
+      </div>
+
       {loading && <Spinner />}
     </header>
   );

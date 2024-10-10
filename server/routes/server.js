@@ -6,12 +6,15 @@ const programchairData = require("./Query/Users/programchairData");
 const curriculumData = require("./Query/Curriculum/curriculumData");
 const insertSchedule = require("./Query/Exam & Schedule/insertSchedule");
 const scheduleData = require("./Query/Exam & Schedule/scheduleData");
-const sheduleDataByYear = require("./Query/Exam & Schedule/getScheduleByYear");
+const getSheduleDataByInstructor = require("./Query/Exam & Schedule/getScheduleByInstructor");
+const getScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getScheduleDataByCourseYearSection");
+const getExamScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getExamScheduleDataByCourseYearSection");
 const editScheduleData = require("./Query/Exam & Schedule/editScheduleData");
 const editSchedule = require("./Query/Exam & Schedule/editSchedule");
 const deleteSchedule = require("./Query/Exam & Schedule/deleteSchedule");
 const insertExamSchedule = require("./Query/Exam & Schedule/insertExamSchedule");
 const viewExamSchedule = require("./Query/Exam & Schedule/viewExamSchedule");
+const getExamSheduleDataByInstructor = require("./Query/Exam & Schedule/getExamScheduleByInstructor");
 const editExamScheduleData = require("./Query/Exam & Schedule/editExamScheduleData");
 const editExamSchedule = require("./Query/Exam & Schedule/editExamSchedule");
 const deleteExamSchedule = require("./Query/Exam & Schedule/deleteExamSchedule");
@@ -95,19 +98,32 @@ route.get("/view-schedule", async (req, res) => {
   }
 });
 // get data from schedule table by year
-route.get("/view-schedule/:year", async (req, res) => {
+route.get("/view-schedule/:instructor", async (req, res) => {
   try {
+    const instructor = req.params.instructor;
+    const resultInstructorSchedule = await getSheduleDataByInstructor(
+      instructor
+    );
+    res.status(200).json(resultInstructorSchedule);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+// get data from schedule table by course year and section
+route.get("/view-schedule/:course/:year/:section", async (req, res) => {
+  try {
+    const course = req.params.course;
     const year = req.params.year;
-    const resultScheduleByYear = await sheduleDataByYear(year);
-    if (year == "1stYear") {
-      res.status(200).json({ "1st Year": resultScheduleByYear });
-    } else if (year == "2ndYear") {
-      res.status(200).json({ "2nd Year": resultScheduleByYear });
-    } else if (year == "3rdYear") {
-      res.status(200).json({ "3rd Year": resultScheduleByYear });
-    } else if (year == "4thYear") {
-      res.status(200).json({ "4th Year": resultScheduleByYear });
-    }
+    const section = req.params.section;
+    const resultExamSchedule = await getScheduleDataByCourseYearSection(
+      course,
+      year,
+      section
+    );
+    res.status(200).json(resultExamSchedule);
   } catch (error) {
     res.status(500).json({
       error: "An error occurred while fetching data",
@@ -181,6 +197,40 @@ route.get("/view-exam-schedule", async (req, res) => {
     });
   }
 });
+// get data from schedule table by year
+route.get("/view-exam-schedule/:instructor", async (req, res) => {
+  try {
+    const instructor = req.params.instructor;
+    const resultInstructorScheduleExam = await getExamSheduleDataByInstructor(
+      instructor
+    );
+    res.status(200).json(resultInstructorScheduleExam);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+// get data from schedule table by course year and section
+route.get("/view-exam-schedule/:course/:year/:section", async (req, res) => {
+  try {
+    const course = req.params.course;
+    const year = req.params.year;
+    const section = req.params.section;
+    const resultExamSchedule = await getExamScheduleDataByCourseYearSection(
+      course,
+      year,
+      section
+    );
+    res.status(200).json(resultExamSchedule);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
 // Data to be edited
 route.get("/view-exam-schedule/:id", async (req, res) => {
   const scheduleId = req.params.id; // Get the ID from the request parameters
@@ -188,7 +238,7 @@ route.get("/view-exam-schedule/:id", async (req, res) => {
     const examScheduleTobeEdited = await editExamScheduleData(scheduleId);
     res.status(200).json(examScheduleTobeEdited);
   } catch (error) {
-    res.statur(500).json({
+    res.status(500).json({
       error: "An error occurred while fetching data",
       details: error.message,
     });

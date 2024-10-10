@@ -169,9 +169,6 @@ const CreateSched = () => {
                 <Dropdown.Item eventKey="Bachelor of Science in Information Technology">
                   Bachelor of Science in Information Technology
                 </Dropdown.Item>
-                <Dropdown.Item eventKey="Bachelor of Science in Computer Science">
-                  Bachelor of Science in Computer Science
-                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Col>

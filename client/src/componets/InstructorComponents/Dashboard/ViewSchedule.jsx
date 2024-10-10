@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Table, Container, Row, Col, Card, Button } from "react-bootstrap";
 import "../../../styles/dashboard.css";
 import { toast } from "react-toastify";
 
 const ViewSchedule = () => {
   const [schedule, setSchedule] = useState([]);
-
+  // identify the user
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
   // Function to fetch schedules from the API
   const fetchData = () => {
-    fetch("http://localhost:5000/api/view-schedule")
+    fetch(`http://localhost:5000/api/view-schedule/${user.instructor_name}`)
       .then((response) => response.json())
       .then((data) => setSchedule(data))
       .catch((error) => console.error(error));
@@ -59,7 +63,6 @@ const ViewSchedule = () => {
                         <tr>
                           <th>Subject</th>
                           <th>Schedule</th>
-                          <th>Instructor</th>
                           <th>Room</th>
                           <th>Day</th>
                         </tr>
@@ -69,7 +72,6 @@ const ViewSchedule = () => {
                           <tr key={item.id}>
                             <td>{item.subject_description}</td>
                             <td>{item.time_sched}</td>
-                            <td>{item.instructor}</td>
                             <td>{item.room}</td>
                             <td>{item.day_sched}</td>
                           </tr>

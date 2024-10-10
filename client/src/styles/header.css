@@ -35,3 +35,19 @@
   width: 1.2rem;
   height: 1.2rem;
 }
+.right-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1rem;
+  gap: 1rem;
+}
+
+/*this for user info*/
+.user-info {
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

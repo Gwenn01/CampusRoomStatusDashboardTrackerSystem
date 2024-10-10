@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import "../styles/programchair.css";
-import { Link, Route, Routes } from "react-router-dom";
+import { useLocation, Link, Route, Routes } from "react-router-dom";
 import Header from "../shared/partition/Header";
 import CreateSchedule from "../componets/ProgramchairComponents/CreateSched";
 import CreateExamSchedule from "../componets/ProgramchairComponents/CreateExamSchedule";
@@ -16,6 +16,10 @@ import dashboard from "../assets/dashboard.png";
 import roomStatus from "../assets/roomstatus.png";
 
 const ProgramChairPage = () => {
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
+
   return (
     <>
       <Header />

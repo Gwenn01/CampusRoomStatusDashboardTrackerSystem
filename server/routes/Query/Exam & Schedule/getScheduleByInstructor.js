@@ -1,18 +1,18 @@
 const dbCon = require("../../connection");
 
-module.exports = async (year) => {
+module.exports = async (instructor) => {
   try {
-    const queryYear = new Promise((resolve, reject) => {
+    const queryInstructor = new Promise((resolve, reject) => {
       dbCon.query(
-        "SELECT * FROM schedule WHERE stud_year = ?",
-        [year],
+        "SELECT * FROM schedule WHERE instructor = ?",
+        [instructor],
         (err, result) => {
           if (err) reject(err);
           resolve(result);
         }
       );
     });
-    return await queryYear;
+    return await queryInstructor;
   } catch (error) {
     throw error;
   }
