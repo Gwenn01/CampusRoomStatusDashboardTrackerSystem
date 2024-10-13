@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
@@ -10,21 +11,23 @@ import vacantIcon from "../../assets/vacant.png";
 import occupiedIcon from "../../assets/occupied.png";
 
 const RoomStatus = () => {
-  // States
+  // user sata
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
+  // variables for roomstatus
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [schedule, setSchedule] = useState([]); // Full schedule data
-  const [filteredSchedule, setFilteredSchedule] = useState([]); // Filtered data
+  const [schedule, setSchedule] = useState([]);
+  const [filteredSchedule, setFilteredSchedule] = useState([]);
   const [rooms, setRooms] = useState([]);
-
-  // Modal states
+  // variables for view schedule details of room
   const [show, setShow] = useState(false);
-  const [selectedRoomSchedule, setSelectedRoomSchedule] = useState([]); // Selected room's schedule
-  const [selectedDay, setSelectedDay] = useState(""); // Selected day's schedule
-  const [selectedRoomName, setSelectedRoomName] = useState(""); // Selected room name
+  const [selectedRoomSchedule, setSelectedRoomSchedule] = useState([]);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedRoomName, setSelectedRoomName] = useState("");
 
   const handleClose = () => setShow(false);
-
-  // Fetch room data
+  // fetch the rooms in the databse
   const fetchRooms = () => {
     fetch("http://localhost:5000/api/get-rooms")
       .then((response) => response.json())
@@ -35,16 +38,14 @@ const RoomStatus = () => {
   useEffect(() => {
     fetchRooms();
   }, []);
-
-  // Fetch schedule data
+  // ffetch the schedule in the database
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
       .then((response) => response.json())
       .then((data) => setSchedule(data))
       .catch((error) => console.error(error));
   }, []);
-
-  // Function to get the current day as a string
+  //function to get the date
   const formatDay = (date) => {
     const options = {
       weekday: "long",
@@ -52,29 +53,37 @@ const RoomStatus = () => {
     };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
-
-  // Filter the schedule for the current day
+  // filtered the schedule base on the day
   useEffect(() => {
     if (schedule.length > 0) {
       const today = new Date();
-      const dayString = formatDay(today); // Get the current day
-      setSelectedDay(dayString); // Set the selected day to current day
+      const dayString = formatDay(today);
+      setSelectedDay(dayString);
 
       const filterSchedule = schedule.filter(
         (item) => item.day_sched === dayString
       );
-      setFilteredSchedule(filterSchedule); // Update only the filtered schedule
+      setFilteredSchedule(filterSchedule);
     }
-  }, [schedule]); // Runs only when schedule changes
+  }, [schedule]);
+  // handle the status button
+  const handleStatusButtonIn = (room_id, status) => {
+    // get the value if the instructor click in and out
+    let instructorName = "";
+    if (user.instructor_name) {
+      instructorName = user.instructor_name;
+    } else if (user.programchair_name) {
+      instructorName = user.programchair_name;
+    }
 
-  // Handle room status update (In/Out)
-  const handleStatusButton = (room_id, status) => {
+    let timeIn = new Date().toLocaleTimeString();
+    // updating in the databse when room is occupied or not
     fetch(`http://localhost:5000/api/update-room-status`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ room_id, status }),
+      body: JSON.stringify({ room_id, status, instructorName, timeIn }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -84,20 +93,90 @@ const RoomStatus = () => {
       })
       .then(() => {
         toast.success("Room status updated successfully");
-        fetchRooms(); // Re-fetch rooms after updating status
+        fetchRooms();
       })
       .catch((error) => {
-        console.error(error);
+        toast.error("Failed to update room status");
+      });
+  };
+  // handle the out button
+  const handleStatusButtonOut = (
+    room_id,
+    status,
+    roomName,
+    instructorName,
+    timeIn
+  ) => {
+    const room_name = roomName;
+    const instructor_name = instructorName;
+    const time_in = timeIn;
+    const time_out = new Date().toLocaleTimeString();
+    const instructor_id = user.instructor_id;
+    const date_reports = new Date().toLocaleDateString();
+
+    // First, insert the report data into the database
+    fetch(`http://localhost:5000/api/insert-report-data`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        room_name,
+        instructor_name,
+        time_in,
+        time_out,
+        instructor_id,
+        date_reports,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to insert report data");
+        }
+      })
+      .then(() => {
+        toast.success("Insert report data successfully");
+        fetchRooms();
+      })
+      .catch((error) => {
+        toast.error("Failed to insert report data");
+      });
+
+    const updatedInstructorName = ""; // reset the value in room status after click the button out
+    const updatedTimeIn = ""; // reset the value in room status after click the button out
+    fetch(`http://localhost:5000/api/update-room-status`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        room_id,
+        status,
+        instructorName: updatedInstructorName,
+        timeIn: updatedTimeIn,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to update room status");
+        }
+        return response.json();
+      })
+      .then(() => {
+        toast.success("Room status updated successfully");
+        fetchRooms();
+      })
+      .catch((error) => {
         toast.error("Failed to update room status");
       });
   };
 
-  // Handle current time and date
+  // Hnadle the timeee format date
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
-    return () => clearInterval(timer); // Cleanup the timer
+    return () => clearInterval(timer);
   }, []);
 
   const formatDate = (date) => {
@@ -122,14 +201,13 @@ const RoomStatus = () => {
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
 
-  // Handle "View Details" click
   const handleShowDetails = (roomName) => {
     const roomSchedule = filteredSchedule.filter(
       (item) => item.room === roomName
     );
 
-    setSelectedRoomSchedule(roomSchedule); // Store the schedule for the selected room
-    setSelectedRoomName(roomName); // Store the room name
+    setSelectedRoomSchedule(roomSchedule);
+    setSelectedRoomName(roomName);
     setShow(true);
   };
 
@@ -158,26 +236,45 @@ const RoomStatus = () => {
               <Card.Body>
                 <Card.Title className="room-title">{room.roomName}</Card.Title>
                 <span>{room.roomStatus}</span>
-                <Card.Text className="room-body">
+                <Card.Text className="room-body ">
                   <img
                     src={
                       room.roomStatus === "vacant" ? vacantIcon : occupiedIcon
                     }
                     alt="room status"
                   />
+                  {room.roomStatus === "occupied" ? (
+                    <div
+                      className="room-info d-flex justify-content-center align-items-center flex-column"
+                      style={{ fontSize: "0.7rem" }}
+                    >
+                      <span>{room.instructorName}</span>
+                      <span>Time in: {room.timeIn}</span>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </Card.Text>
                 <div className="button-group">
                   <Button
                     variant="success"
                     className="action-btn"
-                    onClick={() => handleStatusButton(room.id, "occupied")}
+                    onClick={() => handleStatusButtonIn(room.id, "occupied")}
                   >
                     In
                   </Button>
                   <Button
                     variant="danger"
                     className="action-btn"
-                    onClick={() => handleStatusButton(room.id, "vacant")}
+                    onClick={() =>
+                      handleStatusButtonOut(
+                        room.id,
+                        "vacant",
+                        room.roomName,
+                        room.instructorName,
+                        room.timeIn
+                      )
+                    }
                   >
                     Out
                   </Button>

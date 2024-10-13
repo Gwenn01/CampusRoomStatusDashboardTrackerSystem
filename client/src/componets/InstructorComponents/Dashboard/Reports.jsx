@@ -51,7 +51,7 @@ const Reports = () => {
                     <th>Instructor Name</th>
                     <th>Date</th>
                     <th>Details</th>
-                    <th>Status</th>
+                    <th>Time Count</th>
                     <th>Date</th>
                   </tr>
                 </thead>

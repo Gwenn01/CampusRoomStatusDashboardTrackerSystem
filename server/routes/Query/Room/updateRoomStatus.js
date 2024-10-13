@@ -1,11 +1,11 @@
 const dbCon = require("../../connection");
 
-module.exports = async (room_id, status) => {
+module.exports = async (room_id, status, instructorName, timeIn) => {
   try {
     const queryUpdateRoomStatus = new Promise((resolve, reject) => {
       dbCon.query(
-        "UPDATE rooms SET roomStatus = ? WHERE id = ?",
-        [status, room_id],
+        "UPDATE rooms SET roomStatus = ?, instructorName = ?, timeIn = ? WHERE id = ?",
+        [status, instructorName, timeIn, room_id],
         (err, result) => {
           if (err) {
             reject(err);

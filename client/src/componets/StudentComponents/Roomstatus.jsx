@@ -140,6 +140,17 @@ const RoomStatus = () => {
                     }
                     alt="room status"
                   />
+                  {room.roomStatus === "occupied" ? (
+                    <div
+                      className="room-info d-flex justify-content-center align-items-center flex-column"
+                      style={{ fontSize: "0.7rem" }}
+                    >
+                      <span>{room.instructorName}</span>
+                      <span>Time in: {room.timeIn}</span>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </Card.Text>
                 <Button
                   variant="primary"

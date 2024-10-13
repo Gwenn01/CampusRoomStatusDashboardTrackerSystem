@@ -62,7 +62,7 @@ const ViewExamSchedule = () => {
                 <Card key={section} className="mb-4 shadow-sm card-table">
                   <Card.Header className="bg-primary text-white text-center bg-secondary">
                     <h5 className="mb-0">
-                      {year} Year - Section {section}
+                      Year: {year} Section: {section}
                     </h5>
                   </Card.Header>
                   <Card.Body>

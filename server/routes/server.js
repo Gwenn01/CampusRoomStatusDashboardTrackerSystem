@@ -2,6 +2,8 @@ const route = require("express").Router();
 const dbCon = require("./connection");
 // querying data in the databse
 const instructorData = require("./Query/Users/instructorData");
+const editInstructor = require("./Query/Users/editInstructor");
+const deleteInstructor = require("./Query/Users/deleteInstructor");
 const programchairData = require("./Query/Users/programchairData");
 const curriculumData = require("./Query/Curriculum/curriculumData");
 const insertSchedule = require("./Query/Exam & Schedule/insertSchedule");
@@ -22,8 +24,8 @@ const createInstructorAcc = require("./Query/Users/createInstructorAcc");
 const roomData = require("./Query/Room/roomData");
 const updateRoomStatus = require("./Query/Room/updateRoomStatus");
 const reportData = require("./Query/Reports/reportsData");
-const editInstructor = require("./Query/Users/editInstructor");
-const deleteInstructor = require("./Query/Users/deleteInstructor");
+const insertReports = require("./Query/Reports/insertReports");
+
 // api testing
 route.get("/", (req, res) => {
   res.json("Hello World");
@@ -67,6 +69,36 @@ route.get("/instructor", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+// edit the instructo data
+route.put("/edit-instructor/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const toBeEditValue = req.body;
+    const resultInstructor = await editInstructor(id, toBeEditValue);
+    res.status(200).json(resultInstructor);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while updating instructor data",
+      details: error.message,
+    });
+  }
+});
+// delete instructor
+route.delete("/delete-instructor/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await deleteInstructor(id);
+    res.status(200).json({
+      message: "Instructor deleted successfully",
+      result: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while deleting the instructor",
       details: error.message,
     });
   }
@@ -306,8 +338,13 @@ route.get("/get-rooms", async (req, res) => {
 // Update room status
 route.put("/update-room-status", async (req, res) => {
   try {
-    const { room_id, status } = req.body;
-    const roomStatusReseult = await updateRoomStatus(room_id, status);
+    const { room_id, status, instructorName, timeIn } = req.body;
+    const roomStatusReseult = await updateRoomStatus(
+      room_id,
+      status,
+      instructorName,
+      timeIn
+    );
     res.status(200).json(roomStatusReseult);
   } catch (error) {
     res.status(500).json({
@@ -328,33 +365,31 @@ route.get("/report-data", async (req, res) => {
     });
   }
 });
-route.put("/edit-instructor/:id", async (req, res) => {
+route.post("/insert-report-data", async (req, res) => {
   try {
-    const id = req.params.id;
-    const toBeEditValue = req.body;
-    const resultInstructor = await editInstructor(id, toBeEditValue);
-    res.status(200).json(resultInstructor);
+    const {
+      room_name,
+      instructor_name,
+      time_in,
+      time_out,
+      instructor_id,
+      date_reports,
+    } = req.body;
+    const resultInsertReportData = await insertReports(
+      room_name,
+      instructor_name,
+      time_in,
+      time_out,
+      instructor_id,
+      date_reports
+    );
+    res.status(200).json(resultInsertReportData);
   } catch (error) {
     res.status(500).json({
-      error: "An error occurred while updating instructor data",
+      error: "An error occurred while getting reports data",
       details: error.message,
     });
-  }
-});
-// delete instructor
-route.delete("/delete-instructor/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const result = await deleteInstructor(id);
-    res.status(200).json({
-      message: "Instructor deleted successfully",
-      result: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: "An error occurred while deleting the instructor",
-      details: error.message,
-    });
+    console.log(error.message);
   }
 });
 
