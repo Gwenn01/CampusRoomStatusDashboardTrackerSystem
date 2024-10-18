@@ -5,32 +5,44 @@ import Dropdown from "react-bootstrap/Dropdown";
 import "../../../styles/dashboard.css";
 import { toast } from "react-toastify";
 
-const ViewExamSchedule = () => {
-  const [examschedule, setExamschedule] = useState([]);
+const ViewSchedule = () => {
+  const [course, setCourse] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("All");
+  const [schedule, setSchedule] = useState([]);
+  const [filteredSchedule, setFilteredSchedule] = useState([]); // New state for filtered schedule
   const [selectedYear, setSelectedYear] = useState("Select Year");
   const [selectedSection, setSelectedSection] = useState("Select Section");
-  const [groupedExamSchedules, setGroupedExamSchedules] = useState({});
+  const [groupedSchedules, setGroupedSchedules] = useState({});
 
-  // Function to fetch the exam schedules
+  // Function to fetch schedules from the API
   const fetchData = () => {
     fetch("http://localhost:5000/api/view-exam-schedule")
       .then((response) => response.json())
-      .then((data) => setExamschedule(data))
-      .catch((error) => console.error(error));
+      .then((data) => {
+        setSchedule(data);
+        setFilteredSchedule(data); // Initialize filtered schedule with full data
+      })
+      .catch((error) => console.error("Error fetching schedules:", error));
   };
 
   useEffect(() => {
-    // Fetch data when component loads
     fetchData();
   }, []);
 
+  // Fetch the course data from the database
+  useEffect(() => {
+    fetch("http://localhost:5000/api/course")
+      .then((response) => response.json())
+      .then((data) => setCourse(data))
+      .catch((error) => console.error("Error fetching course data:", error));
+  }, []);
+
   // Group schedules by year and section
-  const groupTheExamSchedule = () => {
-    const filterGroupedExamSchedules = examschedule.reduce((acc, item) => {
+  const groupTheSchedule = (scheduleData) => {
+    const filterGroupedSchedules = scheduleData.reduce((acc, item) => {
       const year = item.stud_year;
       const section = item.section;
 
-      // if there is no year or section, create an empty array for it
       if (!acc[year]) {
         acc[year] = {};
       }
@@ -41,12 +53,11 @@ const ViewExamSchedule = () => {
       return acc;
     }, {});
 
-    setGroupedExamSchedules(filterGroupedExamSchedules);
+    setGroupedSchedules(filterGroupedSchedules);
   };
-
   useEffect(() => {
-    groupTheExamSchedule();
-  }, [examschedule]);
+    groupTheSchedule(filteredSchedule);
+  }, [filteredSchedule]);
 
   // Handle delete action
   const handleDelete = (id) => {
@@ -55,11 +66,22 @@ const ViewExamSchedule = () => {
         method: "DELETE",
       })
         .then(() => {
-          // After deletion, refetch the updated schedule list
           fetchData();
-          toast.success("Exam schedule deleted successfully.");
+          toast.success("Schedule deleted successfully.");
         })
         .catch((error) => console.error(error));
+    }
+  };
+
+  // Handle course change
+  const handleCourseChange = (eventKey) => {
+    setSelectedCourse(eventKey);
+
+    if (eventKey === "All") {
+      setFilteredSchedule(schedule); // Reset to full schedule if "All" is selected
+    } else {
+      const filterCourse = schedule.filter((item) => item.course === eventKey);
+      setFilteredSchedule(filterCourse); // Filter by selected course
     }
   };
 
@@ -73,17 +95,17 @@ const ViewExamSchedule = () => {
     setSelectedSection(eventKey);
   };
 
-  // Filter exam schedules based on selected year and section
-  const filteredExamSchedules = Object.keys(groupedExamSchedules)
+  // Filter schedules based on selected year and section
+  const filteredSchedules = Object.keys(groupedSchedules)
     .filter((year) => selectedYear === "Select Year" || year === selectedYear)
     .reduce((acc, year) => {
-      acc[year] = Object.keys(groupedExamSchedules[year])
+      acc[year] = Object.keys(groupedSchedules[year])
         .filter(
           (section) =>
             selectedSection === "Select Section" || section === selectedSection
         )
         .reduce((secAcc, section) => {
-          secAcc[section] = groupedExamSchedules[year][section];
+          secAcc[section] = groupedSchedules[year][section];
           return secAcc;
         }, {});
       return acc;
@@ -96,11 +118,34 @@ const ViewExamSchedule = () => {
       style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}
     >
       <h1 className="text-center mb-4">View Exam Schedule</h1>
-      <h4 className="text-center mb-4">
-        BS Information Technology Exam Schedule
-      </h4>
+      <h4 className="text-center mb-4">{selectedCourse}</h4>
       <Row>
         <Col md={10} className="mx-auto">
+          <Row className="mb-4">
+            <Col>
+              <Dropdown onSelect={handleCourseChange}>
+                <Dropdown.Toggle
+                  id="dropdown-button-year"
+                  variant="secondary"
+                  className="w-100"
+                >
+                  {selectedCourse || "All"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="All">All</Dropdown.Item>{" "}
+                  {/* Add option to show all courses */}
+                  {course.map((item) => (
+                    <Dropdown.Item
+                      key={item.course_id}
+                      eventKey={item.course_name}
+                    >
+                      {item.course_name}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          </Row>
           <Row className="mb-4">
             <Col>
               <Dropdown onSelect={handleYearChange}>
@@ -141,20 +186,21 @@ const ViewExamSchedule = () => {
             </Col>
           </Row>
 
-          {/* Render filtered exam schedules */}
-          {Object.keys(filteredExamSchedules).map((year) => (
+          {/* Render filtered schedules */}
+          {Object.keys(filteredSchedules).map((year) => (
             <div key={year}>
-              {Object.keys(filteredExamSchedules[year]).map((section) => (
+              {Object.keys(filteredSchedules[year]).map((section) => (
                 <Card key={section} className="mb-4 shadow-sm card-table">
                   <Card.Header className="bg-primary text-white text-center bg-secondary">
                     <h5 className="mb-0">
-                      {year} Year - Section {section}
+                      Year: {year} Section: {section}
                     </h5>
                   </Card.Header>
                   <Card.Body>
                     <Table striped bordered hover className="table-schedule">
                       <thead>
                         <tr>
+                          <th>Course</th>
                           <th>Subject</th>
                           <th>Schedule</th>
                           <th>Instructor</th>
@@ -164,31 +210,26 @@ const ViewExamSchedule = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredExamSchedules[year][section].map((item) => (
+                        {filteredSchedules[year][section].map((item) => (
                           <tr key={item.id}>
+                            <td>{item.course}</td>
                             <td>{item.subject_description}</td>
                             <td>{item.time_sched}</td>
                             <td>{item.instructor}</td>
                             <td>{item.room}</td>
                             <td>{item.day_sched}</td>
                             <td className="text-center">
-                              <Link to={`edit-exam-schedule/${item.id}`}>
+                              <Link to={`edit-schedule/${item.id}`}>
                                 <Button
                                   variant="warning"
-                                  style={{
-                                    fontSize: "0.5rem",
-                                    width: "4rem",
-                                  }}
+                                  style={{ fontSize: "0.5rem", width: "4rem" }}
                                 >
                                   Edit
                                 </Button>
                               </Link>
                               <Button
                                 variant="danger"
-                                style={{
-                                  fontSize: "0.5rem",
-                                  width: "4rem",
-                                }}
+                                style={{ fontSize: "0.5rem", width: "4rem" }}
                                 onClick={() => handleDelete(item.id)}
                               >
                                 Delete
@@ -209,4 +250,4 @@ const ViewExamSchedule = () => {
   );
 };
 
-export default ViewExamSchedule;
+export default ViewSchedule;

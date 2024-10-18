@@ -1,6 +1,7 @@
 const route = require("express").Router();
 const dbCon = require("./connection");
 // querying data in the databse
+const courseData = require("./Query/Course/getCourse");
 const instructorData = require("./Query/Users/instructorData");
 const editInstructor = require("./Query/Users/editInstructor");
 const deleteInstructor = require("./Query/Users/deleteInstructor");
@@ -29,6 +30,18 @@ const insertReports = require("./Query/Reports/insertReports");
 // api testing
 route.get("/", (req, res) => {
   res.json("Hello World");
+});
+// COURSE API
+route.get("/course", async (req, res) => {
+  try {
+    const resultCourse = await courseData();
+    res.status(200).json(resultCourse);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: err.message,
+    });
+  }
 });
 
 // LOGIN API
@@ -394,176 +407,3 @@ route.post("/insert-report-data", async (req, res) => {
 });
 
 module.exports = route;
-
-/* curriculum data
-const curriculumIT = {
-  "1stYear": [
-    {
-      "1stSemester": [
-        { Code: "EN+", Name: "Enhanced Communication Skills", Units: 3 },
-        { Code: "CC101", Name: "Introduction to Computing", Units: 3 },
-        {
-          Code: "NSTP1",
-          Name: "National Service Training Program 1",
-          Units: 3,
-        },
-        {
-          Code: "PE 1B",
-          Name: "Physical Activities Toward Health and Fitness",
-          Units: 2,
-        },
-        { Code: "GEC 7", Name: "Science Technology and Society", Units: 3 },
-        { Code: "GEC 1", Name: "Understanding the Self", Units: 3 },
-        {
-          Code: "FKN 1",
-          Name: "Kontekswalisadong Komunikasyon sa Filipno",
-          Units: 3,
-        },
-      ],
-    },
-    {
-      "2ndSemester": [
-        { Code: "NSTP2C", Name: "Civic Welfare Training Service II", Units: 3 },
-        {
-          Code: "PE 2B",
-          Name: "Physical Activities Toward Health and Fitness 2",
-          Units: 2,
-        },
-        {
-          Code: "GEC 2A",
-          Name: "Reading in the Philippine History (with IP Education)",
-          Units: 3,
-        },
-        { Code: "GEC 4", Name: "Mathematics in the Modern World", Units: 3 },
-        {
-          Code: "HCI 101",
-          Name: "Introduction to Human-Computer Interaction",
-          Units: 3,
-        },
-        { Code: "GEC 5", Name: "Purposive Communication", Units: 3 },
-        { Code: "CC 102", Name: "Computer Programming 1", Units: 3 },
-        { Code: "ITES 102", Name: "Computer Hardware System", Units: 3 },
-      ],
-    },
-  ],
-  "2ndYear": [
-    {
-      "1stSemester": [
-        {
-          Code: "PE 30IC",
-          Name: "Physical Activities Toward Health and Fitness 3",
-          Units: 2,
-        },
-        { Code: "MS 101", Name: "Discrete Mathematics", Units: 3 },
-        {
-          Code: "GEC 3c",
-          Name: "The Contempory World (Peace Education)",
-          Units: 3,
-        },
-        { Code: "GEE 1S", Name: "ASEAN Culture Studies", Units: 3 },
-        {
-          Code: "ITE 1",
-          Name: "IT Elective 1-Web Systems and Technologies",
-          Units: 3,
-        },
-        { Code: "GEM", Name: "The  Life and Works of Rizal", Units: 3 },
-        { Code: "CC 103", Name: "Computer Programming II", Units: 3 },
-      ],
-    },
-    {
-      "2ndSemester": [
-        {
-          Code: "PE 401D",
-          Name: "Physical Activities Toward Health and Fitness 4",
-          Units: 2,
-        },
-        { Code: "GEC 6", Name: "Art Appreciation", Units: 3 },
-        { Code: "GEE 7", Name: "Gender and Society", Units: 3 },
-        { Code: "GEE 14", Name: "TechoEnterpreneurship", Units: 3 },
-        { Code: "CC 105", Name: "Information Management", Units: 3 },
-        {
-          Code: "ITE 2",
-          Name: "IT Elective 2 Object-Oriented Programming",
-          Units: 3,
-        },
-        { Code: "CC 104", Name: "Data Structure and Algorithms", Units: 3 },
-      ],
-    },
-  ],
-  "3rdYear": [
-    {
-      "1stSemester": [
-        {
-          Code: "ITP",
-          Name: "Integrative Programming Technologies 1",
-          Units: 3,
-        },
-        { Code: "PF 102", Name: "Evet Driven Programming", Units: 3 },
-        {
-          Code: "ITE 3",
-          Name: "IT Elective 3 Platform Technologies",
-          Units: 3,
-        },
-        { Code: "EN 1", Name: "Scientific And Technical Writing", Units: 3 },
-        {
-          Code: "GDDAT",
-          Name: "Game Development and Digital Animation Technology",
-          Units: 3,
-        },
-        { Code: "IM 101", Name: "Advance Database Systems", Units: 3 },
-      ],
-    },
-    {
-      "2ndSemester": [
-        { Code: "GEC 8", Name: "Ethics", Units: 3 },
-        {
-          Code: "ITE 4",
-          Name: "IT Elective 4 Aftificial Intelligence",
-          Units: 3,
-        },
-        {
-          Code: "IAS 101",
-          Name: "Information Assurance and Security",
-          Units: 3,
-        },
-        { Code: "NET 101", Name: "Networking 1", Units: 3 },
-        {
-          Code: "CC 106",
-          Name: "Application Development and Emerging Technologies",
-          Units: 3,
-        },
-        {
-          Code: "SIA 101",
-          Name: "System Integration and Architecture 1",
-          Units: 3,
-        },
-        { Code: "CAP 101", Name: "Capstone Project and Research1", Units: 3 },
-      ],
-    },
-    {
-      "Summer/Midyear": [
-        { Code: "NET 102", Name: "Networking 2", Units: 3 },
-        { Code: "SP 101", Name: "Social Issues and Professional", Units: 3 },
-        { Code: "MS 102", Name: "Quantitative Methods", Units: 3 },
-      ],
-    },
-  ],
-  "4thYear": [
-    {
-      "1stSemester": [
-        { Code: "FLBG", Name: "Foreign Language", Units: 3 },
-        { Code: "CAP 102", Name: "Capstone Project and Reasearch 2", Units: 3 },
-        {
-          Code: "SA 101",
-          Name: "System Administrator and Maintenace",
-          Units: 3,
-        },
-      ],
-    },
-    {
-      "2ndSemester": [
-        { Code: "PRAC 101", Name: "Practicum (600hours)", Units: 3 },
-      ],
-    },
-  ],
-};*/

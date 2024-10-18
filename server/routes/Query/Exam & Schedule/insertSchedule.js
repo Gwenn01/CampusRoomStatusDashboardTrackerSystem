@@ -14,12 +14,13 @@ module.exports = async (inputData) => {
       room,
       day_sched,
       instructor_id,
+      course_id,
     } = inputData;
 
     // Create a new promise for the insert query
     const queryInsertSchedule = new Promise((resolve, reject) => {
-      const query = `INSERT INTO schedule(course, semester, stud_year, section, instructor, subject_description, time_sched, room, day_sched, instructor_id) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const query = `INSERT INTO schedule(course, semester, stud_year, section, instructor, subject_description, time_sched, room, day_sched, instructor_id, course_id) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
       // Execute the query with the input values
       dbCon.query(
@@ -35,6 +36,7 @@ module.exports = async (inputData) => {
           room,
           day_sched,
           instructor_id,
+          course_id,
         ],
         (err, result) => {
           if (err) {

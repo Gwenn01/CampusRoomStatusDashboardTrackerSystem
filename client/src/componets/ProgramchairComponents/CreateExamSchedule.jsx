@@ -18,10 +18,13 @@ const CreateSched = () => {
   const [data, setData] = useState([]);
   const [tempData, setTempData] = useState([]);
   const [displayData, setDisplayData] = useState([]);
+  // course data and filtered course data
+  const [courseData, setCourseData] = useState([]);
   // instructor data
   const [instructorData, setInstructorData] = useState([]);
   // State for the dropdowns
   const [selectedCourse, setSelectedCourse] = useState("Select Course");
+  const [selectedCourdeId, setSelectedCourseId] = useState(null);
   const [selectedSemester, setSelectedSemester] = useState("Select Semester");
   const [selectedYear, setSelectedYear] = useState("Select Year");
   const [selectedInstructor, setSelectedInstructor] =
@@ -41,10 +44,9 @@ const CreateSched = () => {
     setShow(true);
     setSelectedSubject(`${code} ${name} (${units} units)`);
   };
-
-  // handle add schedule
   const [scheduleData, setScheduleData] = useState([]);
 
+  // handle add schedule
   const handleAddSchedule = async () => {
     if (
       selectedCourse === "Select Course" ||
@@ -73,6 +75,7 @@ const CreateSched = () => {
       room: selectedRoom,
       day_sched: selectedDay,
       instructor_id: instructorId,
+      course_id: selectedCourdeId,
     };
 
     try {
@@ -87,6 +90,7 @@ const CreateSched = () => {
         throw new Error(`Error! status: ${response.status}`);
       }
       const result = await response.json();
+      console.log("Schedule added successfully:", result); // More detailed logging
       toast.success("Schedule added successfully!");
       handleClose();
     } catch (error) {
@@ -95,6 +99,20 @@ const CreateSched = () => {
     }
   };
 
+  // fetch course data from the database
+  useEffect(() => {
+    fetch("http://localhost:5000/api/course")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setCourseData(data);
+      })
+      .catch((error) => {});
+  });
   // Fetch curriculum data from the database
   useEffect(() => {
     fetch("http://localhost:5000/api/curriculum")
@@ -130,12 +148,28 @@ const CreateSched = () => {
   // Handle dropdown change
   const handleCourseChange = (e) => {
     setSelectedCourse(e);
-    setDisplayData(data); // Display full data based on selected course
+
+    let courseId;
+    let filteredCourse;
+    if (e === "BS Information Technology") {
+      courseId = 1;
+      filteredCourse = data.filter((item) => item.course_id === courseId);
+    } else if (e === "BS Computer Science") {
+      courseId = 2;
+      filteredCourse = data.filter((item) => item.course_id === courseId);
+    } else {
+      // If no specific course is selected, display full data
+      setDisplayData(data);
+      return; // Exit early to prevent further execution
+    }
+
+    setSelectedCourseId(courseId);
+    setDisplayData(filteredCourse);
   };
 
   const handleYearChange = (e) => {
     setSelectedYear(e);
-    const filteredYear = data.filter((item) => item.year === e);
+    const filteredYear = displayData.filter((item) => item.year === e);
     setTempData(filteredYear);
     setDisplayData(filteredYear);
   };
@@ -166,9 +200,16 @@ const CreateSched = () => {
                 {selectedCourse}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item eventKey="Bachelor of Science in Information Technology">
-                  Bachelor of Science in Information Technology
-                </Dropdown.Item>
+                {courseData.map((item) => {
+                  return (
+                    <Dropdown.Item
+                      eventKey={item.course_name}
+                      key={item.course_id}
+                    >
+                      {item.course_name}
+                    </Dropdown.Item>
+                  );
+                })}
               </Dropdown.Menu>
             </Dropdown>
           </Col>
@@ -223,7 +264,7 @@ const CreateSched = () => {
                 setSelectedInstructor(selectedKey); // this will set the selected instructor
                 setInstructorId(
                   instructorData.find(
-                    (instructor) => instructor.instructor_name == selectedKey
+                    (instructor) => instructor.instructor_name === selectedKey
                   )?.instructor_id
                 ); // this will set the corresponding instructor ID
               }}

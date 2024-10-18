@@ -57,7 +57,7 @@ const RoomSchedule = () => {
 
   return (
     <Container fluid style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
-      <h1 className="text-center mb-4">View Schedule</h1>
+      <h1 className="text-center mb-4">Room Schedule</h1>
       <h4 className="text-center mb-4">CCIT Room and Laboratory</h4>
       <Row>
         <Col md={10} className="mx-auto">
@@ -90,6 +90,7 @@ const RoomSchedule = () => {
                 <Table striped bordered hover className="table-schedule">
                   <thead>
                     <tr>
+                      <th>Course</th>
                       <th>Subject</th>
                       <th>Instructor</th>
                       <th>Year</th>
@@ -101,6 +102,7 @@ const RoomSchedule = () => {
                   <tbody>
                     {filteredSchedulesForRoom[room]?.map((item) => (
                       <tr key={item.id}>
+                        <td>{item.course}</td>
                         <td>{item.subject_description}</td>
                         <td>{item.instructor}</td>
                         <td>{item.stud_year}</td>

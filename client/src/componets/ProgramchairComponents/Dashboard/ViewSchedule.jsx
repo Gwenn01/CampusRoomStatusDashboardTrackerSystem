@@ -6,7 +6,10 @@ import "../../../styles/dashboard.css";
 import { toast } from "react-toastify";
 
 const ViewSchedule = () => {
+  const [course, setCourse] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("All");
   const [schedule, setSchedule] = useState([]);
+  const [filteredSchedule, setFilteredSchedule] = useState([]); // New state for filtered schedule
   const [selectedYear, setSelectedYear] = useState("Select Year");
   const [selectedSection, setSelectedSection] = useState("Select Section");
   const [groupedSchedules, setGroupedSchedules] = useState({});
@@ -15,22 +18,31 @@ const ViewSchedule = () => {
   const fetchData = () => {
     fetch("http://localhost:5000/api/view-schedule")
       .then((response) => response.json())
-      .then((data) => setSchedule(data))
-      .catch((error) => console.error(error));
+      .then((data) => {
+        setSchedule(data);
+        setFilteredSchedule(data); // Initialize filtered schedule with full data
+      })
+      .catch((error) => console.error("Error fetching schedules:", error));
   };
 
   useEffect(() => {
-    // Fetch data on component mount
     fetchData();
   }, []);
 
+  // Fetch the course data from the database
+  useEffect(() => {
+    fetch("http://localhost:5000/api/course")
+      .then((response) => response.json())
+      .then((data) => setCourse(data))
+      .catch((error) => console.error("Error fetching course data:", error));
+  }, []);
+
   // Group schedules by year and section
-  const groupTheSchedule = () => {
-    const filterGroupedSchedules = schedule.reduce((acc, item) => {
+  const groupTheSchedule = (scheduleData) => {
+    const filterGroupedSchedules = scheduleData.reduce((acc, item) => {
       const year = item.stud_year;
       const section = item.section;
 
-      // if there is no year or section, create an empty array for it
       if (!acc[year]) {
         acc[year] = {};
       }
@@ -43,10 +55,9 @@ const ViewSchedule = () => {
 
     setGroupedSchedules(filterGroupedSchedules);
   };
-
   useEffect(() => {
-    groupTheSchedule();
-  }, [schedule]);
+    groupTheSchedule(filteredSchedule);
+  }, [filteredSchedule]);
 
   // Handle delete action
   const handleDelete = (id) => {
@@ -59,6 +70,18 @@ const ViewSchedule = () => {
           toast.success("Schedule deleted successfully.");
         })
         .catch((error) => console.error(error));
+    }
+  };
+
+  // Handle course change
+  const handleCourseChange = (eventKey) => {
+    setSelectedCourse(eventKey);
+
+    if (eventKey === "All") {
+      setFilteredSchedule(schedule); // Reset to full schedule if "All" is selected
+    } else {
+      const filterCourse = schedule.filter((item) => item.course === eventKey);
+      setFilteredSchedule(filterCourse); // Filter by selected course
     }
   };
 
@@ -95,9 +118,34 @@ const ViewSchedule = () => {
       style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}
     >
       <h1 className="text-center mb-4">View Schedule</h1>
-      <h4 className="text-center mb-4">BS Information Technology Schedule</h4>
+      <h4 className="text-center mb-4">{selectedCourse}</h4>
       <Row>
         <Col md={10} className="mx-auto">
+          <Row className="mb-4">
+            <Col>
+              <Dropdown onSelect={handleCourseChange}>
+                <Dropdown.Toggle
+                  id="dropdown-button-year"
+                  variant="secondary"
+                  className="w-100"
+                >
+                  {selectedCourse || "All"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="All">All</Dropdown.Item>{" "}
+                  {/* Add option to show all courses */}
+                  {course.map((item) => (
+                    <Dropdown.Item
+                      key={item.course_id}
+                      eventKey={item.course_name}
+                    >
+                      {item.course_name}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          </Row>
           <Row className="mb-4">
             <Col>
               <Dropdown onSelect={handleYearChange}>
@@ -152,6 +200,7 @@ const ViewSchedule = () => {
                     <Table striped bordered hover className="table-schedule">
                       <thead>
                         <tr>
+                          <th>Course</th>
                           <th>Subject</th>
                           <th>Schedule</th>
                           <th>Instructor</th>
@@ -163,6 +212,7 @@ const ViewSchedule = () => {
                       <tbody>
                         {filteredSchedules[year][section].map((item) => (
                           <tr key={item.id}>
+                            <td>{item.course}</td>
                             <td>{item.subject_description}</td>
                             <td>{item.time_sched}</td>
                             <td>{item.instructor}</td>
