@@ -24,7 +24,7 @@ const CreateSched = () => {
   const [instructorData, setInstructorData] = useState([]);
   // State for the dropdowns
   const [selectedCourse, setSelectedCourse] = useState("Select Course");
-  const [selectedCourdeId, setSelectedCourseId] = useState(null);
+  const [selectedCousreId, setSelectedCourseId] = useState(null);
   const [selectedSemester, setSelectedSemester] = useState("Select Semester");
   const [selectedYear, setSelectedYear] = useState("Select Year");
   const [selectedInstructor, setSelectedInstructor] =
@@ -46,59 +46,22 @@ const CreateSched = () => {
   };
   const [scheduleData, setScheduleData] = useState([]);
 
-  // handle add schedule
-  const handleAddSchedule = async () => {
-    if (
-      selectedCourse === "Select Course" ||
-      selectedSemester === "Select Semester" ||
-      selectedYear === "Select Year" ||
-      selectedInstructor === "Select Instructor" ||
-      selectedSubject === "Select Subject" ||
-      selectedDay === "Select Day" ||
-      selectedTimeFrom === "Select From" ||
-      selectedTimeTo === "Select To" ||
-      selectedRoom === "Select Room" ||
-      selectedSection === "Select Section"
-    ) {
-      toast.error("Please fill all fields");
-      return;
-    }
-
-    const newSchedule = {
-      course: selectedCourse,
-      semester: selectedSemester,
-      stud_year: selectedYear,
-      section: selectedSection,
-      instructor: selectedInstructor,
-      subject_description: selectedSubject,
-      time_sched: `${selectedTimeFrom} - ${selectedTimeTo}`,
-      room: selectedRoom,
-      day_sched: selectedDay,
-      instructor_id: instructorId,
-      course_id: selectedCourdeId,
-    };
-
-    try {
-      const response = await fetch("http://localhost:5000/api/schedule", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newSchedule),
+  // fetch the schedule data from the database
+  useEffect(() => {
+    fetch("http://localhost:5000/api/view-schedule")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setScheduleData(data);
+      })
+      .catch((error) => {
+        console.log("Error fetching data:", err);
       });
-      if (!response.ok) {
-        throw new Error(`Error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      console.log("Schedule added successfully:", result); // More detailed logging
-      toast.success("Schedule added successfully!");
-      handleClose();
-    } catch (error) {
-      console.error("Error adding schedule:", error); // More detailed logging
-      toast.error("Error adding schedule: " + error.message);
-    }
-  };
-
+  }, []);
   // fetch course data from the database
   useEffect(() => {
     fetch("http://localhost:5000/api/course")
@@ -111,8 +74,10 @@ const CreateSched = () => {
       .then((data) => {
         setCourseData(data);
       })
-      .catch((error) => {});
-  });
+      .catch((error) => {
+        console.log("Error fetching data:", err);
+      });
+  }, []);
   // Fetch curriculum data from the database
   useEffect(() => {
     fetch("http://localhost:5000/api/curriculum")
@@ -178,6 +143,124 @@ const CreateSched = () => {
     setSelectedSemester(e);
     const filteredSemester = tempData.filter((item) => item.semester === e);
     setDisplayData(filteredSemester);
+  };
+
+  // handle add schedule
+  const handleAddSchedule = async () => {
+    // check if the user input is empty
+    if (
+      selectedCourse === "Select Course" ||
+      selectedSemester === "Select Semester" ||
+      selectedYear === "Select Year" ||
+      selectedInstructor === "Select Instructor" ||
+      selectedSubject === "Select Subject" ||
+      selectedDay === "Select Day" ||
+      selectedTimeFrom === "Select From" ||
+      selectedTimeTo === "Select To" ||
+      selectedRoom === "Select Room" ||
+      selectedSection === "Select Section"
+    ) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    // create a new schedule object with field names matching the database
+    const newSchedule = {
+      course: selectedCourse,
+      semester: selectedSemester,
+      stud_year: selectedYear,
+      section: selectedSection,
+      instructor: selectedInstructor,
+      subject_description: selectedSubject,
+      time_sched: `${selectedTimeFrom} - ${selectedTimeTo}`,
+      room: selectedRoom,
+      day_sched: selectedDay,
+      instructor_id: instructorId,
+      course_id: selectedCousreId,
+    };
+
+    // Helper function to check schedule existence and insert if it doesn't exist
+    const handleScheduleInsertion = async (day) => {
+      newSchedule.day_sched = day;
+      const exists = await checkIfScheduleExists(newSchedule);
+      if (exists) {
+        toast.error(`Schedule for ${day} already exists!`);
+        return false; // Stop if schedule exists
+      }
+      await postNewSchedule(newSchedule); // Insert if it doesn't exist
+      return true;
+    };
+
+    // Handle "MW" and "TTh" cases for multiple days
+    if (selectedDay === "MW") {
+      const mondayAdded = await handleScheduleInsertion("Monday");
+      if (!mondayAdded) return;
+
+      const wednesdayAdded = await handleScheduleInsertion("Wednesday");
+      if (!wednesdayAdded) return;
+
+      return;
+    }
+
+    if (selectedDay === "TTh") {
+      const tuesdayAdded = await handleScheduleInsertion("Tuesday");
+      if (!tuesdayAdded) return;
+
+      const thursdayAdded = await handleScheduleInsertion("Thursday");
+      if (!thursdayAdded) return;
+
+      return;
+    }
+
+    // Check and insert schedule for single day
+    const singleDayAdded = await handleScheduleInsertion(selectedDay);
+    if (!singleDayAdded) return;
+  };
+
+  // Function to post new schedule to the server
+  const postNewSchedule = async (newSchedule) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/schedule", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newSchedule),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      toast.success("Schedule added successfully!");
+      handleClose();
+    } catch (error) {
+      console.error("Error adding schedule:", error); // More detailed logging
+      toast.error("Error adding schedule: " + error.message);
+    }
+  };
+
+  // Function to check if the schedule exists
+  const checkIfScheduleExists = async (newSchedule) => {
+    // Using a simple check instead of map
+    const scheduleExists = scheduleData.some((item) => {
+      console.log(
+        item.time_sched,
+        newSchedule.time_sched,
+        item.day_sched,
+        newSchedule.day_sched,
+        item.room,
+        newSchedule.room
+      );
+      return (
+        item.time_sched === newSchedule.time_sched &&
+        item.day_sched === newSchedule.day_sched &&
+        item.room === newSchedule.room
+      );
+    });
+
+    return scheduleExists;
   };
 
   return (
@@ -721,6 +804,8 @@ const CreateSched = () => {
                   "Thursday",
                   "Friday",
                   "Saturday",
+                  "MW",
+                  "TTh",
                 ].map((day) => (
                   <Dropdown.Item key={day} eventKey={day}>
                     {day}

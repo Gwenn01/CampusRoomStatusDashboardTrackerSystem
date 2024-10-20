@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 const ViewSchedule = () => {
   const [course, setCourse] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All Course");
+  const [selectedCourse, setSelectedCourse] = useState("All");
   const [schedule, setSchedule] = useState([]);
   const [filteredSchedule, setFilteredSchedule] = useState([]); // New state for filtered schedule
   const [selectedYear, setSelectedYear] = useState("Select Year");
