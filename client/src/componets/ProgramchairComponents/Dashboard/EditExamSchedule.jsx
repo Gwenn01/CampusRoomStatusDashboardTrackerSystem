@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Change here
+import { useParams, useNavigate } from "react-router-dom";
 import { Form, Button, Container } from "react-bootstrap";
 import { toast } from "react-toastify";
 
-const EditExamSchedule = () => {
+const EditSchedule = () => {
   const { id } = useParams(); // Get the schedule ID from the URL
-  const navigate = useNavigate(); // Change here
+  const navigate = useNavigate();
   const [scheduleItem, setScheduleItem] = useState(null);
 
-  // get valued to be updated in the databse
+  // Fetch the schedule to be edited
   useEffect(() => {
-    fetch(`http://localhost:5000/api/view-exam-schedule/${id}`)
+    fetch(`http://localhost:5000/api/view-exam-schedulee/${id}`)
       .then((response) => response.json())
       .then((data) => setScheduleItem(data))
       .catch((error) => console.error(error));
-  }, [id]);
+  }, [id]); // Runs only when 'id' changes
 
   const handleChange = (e) => {
     setScheduleItem({
@@ -22,7 +22,7 @@ const EditExamSchedule = () => {
       [e.target.name]: e.target.value,
     });
   };
-  // handle the edit schedule
+
   const handleSubmit = (e) => {
     e.preventDefault();
     fetch(`http://localhost:5000/api/edit-exam-schedule/${id}`, {
@@ -33,7 +33,7 @@ const EditExamSchedule = () => {
       body: JSON.stringify(scheduleItem),
     })
       .then(() => toast.success("Schedule updated successfully"))
-      .then(() => navigate("/programchair/dashboard/view-exam-schedule"))
+      .then(() => navigate("/programchair/dashboard/view-schedule"))
       .catch((error) => console.error(error));
   };
 
@@ -48,7 +48,7 @@ const EditExamSchedule = () => {
           <Form.Control
             type="text"
             name="subject_description"
-            value={scheduleItem.subject_description}
+            value={scheduleItem.subject_description || ""}
             onChange={handleChange}
             required
           />
@@ -58,7 +58,17 @@ const EditExamSchedule = () => {
           <Form.Control
             type="text"
             name="instructor"
-            value={scheduleItem.instructor}
+            value={scheduleItem.instructor || ""}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
+        <Form.Group controlId="instructor">
+          <Form.Label>Instructor ID</Form.Label>
+          <Form.Control
+            type="text"
+            name="instructor"
+            value={scheduleItem.instructor_id || ""}
             onChange={handleChange}
             required
           />
@@ -68,7 +78,7 @@ const EditExamSchedule = () => {
           <Form.Control
             type="text"
             name="time_sched"
-            value={scheduleItem.time_sched}
+            value={scheduleItem.time_sched || ""}
             onChange={handleChange}
             required
           />
@@ -78,7 +88,7 @@ const EditExamSchedule = () => {
           <Form.Control
             type="text"
             name="room"
-            value={scheduleItem.room}
+            value={scheduleItem.room || ""}
             onChange={handleChange}
             required
           />
@@ -88,7 +98,7 @@ const EditExamSchedule = () => {
           <Form.Control
             as="select"
             name="day_sched"
-            value={scheduleItem.day_sched}
+            value={scheduleItem.day_sched || "Monday"} // Ensure value is set
             onChange={handleChange}
             required
           >
@@ -97,6 +107,7 @@ const EditExamSchedule = () => {
             <option>Wednesday</option>
             <option>Thursday</option>
             <option>Friday</option>
+            <option>Sturday</option>
           </Form.Control>
         </Form.Group>
         <Button type="submit" className="mt-4">
@@ -107,4 +118,4 @@ const EditExamSchedule = () => {
   );
 };
 
-export default EditExamSchedule;
+export default EditSchedule;

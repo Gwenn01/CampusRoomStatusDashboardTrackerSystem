@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 const ViewSchedule = () => {
   const [course, setCourse] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All");
+  const [selectedCourse, setSelectedCourse] = useState("All Course");
   const [schedule, setSchedule] = useState([]);
   const [filteredSchedule, setFilteredSchedule] = useState([]); // New state for filtered schedule
   const [selectedYear, setSelectedYear] = useState("Select Year");
@@ -37,24 +37,29 @@ const ViewSchedule = () => {
       .catch((error) => console.error("Error fetching course data:", error));
   }, []);
 
-  // Group schedules by year and section
+  // Group schedules by course, year, and section
   const groupTheSchedule = (scheduleData) => {
     const filterGroupedSchedules = scheduleData.reduce((acc, item) => {
+      const course = item.course;
       const year = item.stud_year;
       const section = item.section;
 
-      if (!acc[year]) {
-        acc[year] = {};
+      if (!acc[course]) {
+        acc[course] = {};
       }
-      if (!acc[year][section]) {
-        acc[year][section] = [];
+      if (!acc[course][year]) {
+        acc[course][year] = {};
       }
-      acc[year][section].push(item);
+      if (!acc[course][year][section]) {
+        acc[course][year][section] = [];
+      }
+      acc[course][year][section].push(item);
       return acc;
     }, {});
 
     setGroupedSchedules(filterGroupedSchedules);
   };
+
   useEffect(() => {
     groupTheSchedule(filteredSchedule);
   }, [filteredSchedule]);
@@ -97,16 +102,24 @@ const ViewSchedule = () => {
 
   // Filter schedules based on selected year and section
   const filteredSchedules = Object.keys(groupedSchedules)
-    .filter((year) => selectedYear === "Select Year" || year === selectedYear)
-    .reduce((acc, year) => {
-      acc[year] = Object.keys(groupedSchedules[year])
+    .filter((course) => selectedCourse === "All" || course === selectedCourse)
+    .reduce((acc, course) => {
+      acc[course] = Object.keys(groupedSchedules[course])
         .filter(
-          (section) =>
-            selectedSection === "Select Section" || section === selectedSection
+          (year) => selectedYear === "Select Year" || year === selectedYear
         )
-        .reduce((secAcc, section) => {
-          secAcc[section] = groupedSchedules[year][section];
-          return secAcc;
+        .reduce((yearAcc, year) => {
+          yearAcc[year] = Object.keys(groupedSchedules[course][year])
+            .filter(
+              (section) =>
+                selectedSection === "Select Section" ||
+                section === selectedSection
+            )
+            .reduce((secAcc, section) => {
+              secAcc[section] = groupedSchedules[course][year][section];
+              return secAcc;
+            }, {});
+          return yearAcc;
         }, {});
       return acc;
     }, {});
@@ -133,7 +146,6 @@ const ViewSchedule = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item eventKey="All">All</Dropdown.Item>{" "}
-                  {/* Add option to show all courses */}
                   {course.map((item) => (
                     <Dropdown.Item
                       key={item.course_id}
@@ -187,60 +199,83 @@ const ViewSchedule = () => {
           </Row>
 
           {/* Render filtered schedules */}
-          {Object.keys(filteredSchedules).map((year) => (
-            <div key={year}>
-              {Object.keys(filteredSchedules[year]).map((section) => (
-                <Card key={section} className="mb-4 shadow-sm card-table">
-                  <Card.Header className="bg-primary text-white text-center bg-secondary">
-                    <h5 className="mb-0">
-                      Year: {year} Section: {section}
-                    </h5>
-                  </Card.Header>
-                  <Card.Body>
-                    <Table striped bordered hover className="table-schedule">
-                      <thead>
-                        <tr>
-                          <th>Course</th>
-                          <th>Subject</th>
-                          <th>Schedule</th>
-                          <th>Instructor</th>
-                          <th>Room</th>
-                          <th>Day</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredSchedules[year][section].map((item) => (
-                          <tr key={item.id}>
-                            <td>{item.course}</td>
-                            <td>{item.subject_description}</td>
-                            <td>{item.time_sched}</td>
-                            <td>{item.instructor}</td>
-                            <td>{item.room}</td>
-                            <td>{item.day_sched}</td>
-                            <td className="text-center">
-                              <Link to={`edit-schedule/${item.id}`}>
-                                <Button
-                                  variant="warning"
-                                  style={{ fontSize: "0.5rem", width: "4rem" }}
-                                >
-                                  Edit
-                                </Button>
-                              </Link>
-                              <Button
-                                variant="danger"
-                                style={{ fontSize: "0.5rem", width: "4rem" }}
-                                onClick={() => handleDelete(item.id)}
-                              >
-                                Delete
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </Card.Body>
-                </Card>
+          {Object.keys(filteredSchedules).map((course) => (
+            <div key={course}>
+              <h4 className="text-center mb-4">{course}</h4>
+              {Object.keys(filteredSchedules[course]).map((year) => (
+                <div key={year}>
+                  {Object.keys(filteredSchedules[course][year]).map(
+                    (section) => (
+                      <Card key={section} className="mb-4 shadow-sm card-table">
+                        <Card.Header className="bg-primary text-white text-center bg-secondary">
+                          <h5 className="mb-0">
+                            Year: {year} Section: {section}
+                          </h5>
+                        </Card.Header>
+                        <Card.Body>
+                          <Table
+                            striped
+                            bordered
+                            hover
+                            className="table-schedule"
+                          >
+                            <thead>
+                              <tr>
+                                <th>Course</th>
+                                <th>Subject</th>
+                                <th>Schedule</th>
+                                <th>Instructor</th>
+                                <th>Room</th>
+                                <th>Day</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {filteredSchedules[course][year][section].map(
+                                (item) => (
+                                  <tr key={item.id}>
+                                    <td>{item.course}</td>
+                                    <td>{item.subject_description}</td>
+                                    <td>{item.time_sched}</td>
+                                    <td>{item.instructor}</td>
+                                    <td>{item.room}</td>
+                                    <td>{item.day_sched}</td>
+                                    <td className="text-center">
+                                      <Link
+                                        to={`edit-exam-schedule/${item.id}`}
+                                      >
+                                        <Button
+                                          variant="warning"
+                                          style={{
+                                            fontSize: "0.5rem",
+                                            width: "3.5rem",
+                                            marginRight: "5px",
+                                          }}
+                                        >
+                                          Edit
+                                        </Button>
+                                      </Link>
+                                      <Button
+                                        variant="danger"
+                                        onClick={() => handleDelete(item.id)}
+                                        style={{
+                                          fontSize: "0.5rem",
+                                          width: "3.5rem",
+                                        }}
+                                      >
+                                        Delete
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                )
+                              )}
+                            </tbody>
+                          </Table>
+                        </Card.Body>
+                      </Card>
+                    )
+                  )}
+                </div>
               ))}
             </div>
           ))}

@@ -49,7 +49,7 @@ const ViewSchedule = () => {
       style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}
     >
       <h1 className="text-center mb-4">View Schedule</h1>
-      <h4 className="text-center mb-4">BS Information Technology Schedule</h4>
+      <h4 className="text-center mb-4">{user.course}</h4>
       <Row>
         <Col md={10} className="mx-auto">
           {Object.keys(groupedSchedules).map((year) => (

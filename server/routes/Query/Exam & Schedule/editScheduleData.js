@@ -2,23 +2,20 @@ const dbCon = require("../../connection");
 
 module.exports = async (scheduleID) => {
   try {
-    const editScheduleData = new Promise((resolve, reject) => {
-      const IDtobeEdited = scheduleID;
-      // SQL query to fetch the schedule by ID
+    const querySchedID = new Promise((resolve, reject) => {
+      const id = scheduleID;
       const querySchedule = `SELECT * FROM schedule WHERE id = ?`;
-
-      dbCon.query(querySchedule, [IDtobeEdited], (err, result) => {
+      dbCon.query(querySchedule, [id], (err, result) => {
         if (err) {
           reject(err);
-        }
-        if (result.length === 0) {
+        } else if (result.length === 0) {
           reject({ message: "Schedule not found" });
+        } else {
+          resolve(result);
         }
-        resolve(result[0]);
       });
     });
-    const scheduleToBeEdited = await editScheduleData;
-    return scheduleToBeEdited;
+    return await querySchedID;
   } catch (error) {
     throw error;
   }

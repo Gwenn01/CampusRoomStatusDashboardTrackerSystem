@@ -2,9 +2,8 @@ const dbCon = require("../../connection");
 
 module.exports = async (id, toBeEditValue) => {
   try {
-    const instructorId = id;
     const {
-      instructorId: newInstructorId,
+      instructorId,
       instructorName,
       instructorUsername,
       instructorPassword,
@@ -14,11 +13,11 @@ module.exports = async (id, toBeEditValue) => {
       dbCon.query(
         `UPDATE instructor SET instructor_id = ?, instructor_name = ?, instructor_username = ?, instructor_password = ? WHERE instructor_id = ?`,
         [
-          newInstructorId,
+          instructorId,
           instructorName,
           instructorUsername,
           instructorPassword,
-          instructorId,
+          id,
         ],
         (err, result) => {
           if (err) {

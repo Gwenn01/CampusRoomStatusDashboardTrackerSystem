@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/selectuser.css";
 import { Table, Container, Row, Col } from "react-bootstrap";
@@ -15,6 +15,7 @@ const SelectUser = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   // variable for  STUDENTS data
+  const [courseData, setCourseData] = useState([]);
   const [course, setCourse] = useState("");
   const [year, setYear] = useState("");
   const [section, setSection] = useState("");
@@ -22,6 +23,13 @@ const SelectUser = () => {
   const [loading, setLoading] = useState(false); // State to manage loading
   const [activeButton, setActiveButton] = useState(null); // State to track which button is clicked
   const navigate = useNavigate();
+  // fetch the course from backend
+  useEffect(() => {
+    fetch("http://localhost:5000/api/course")
+      .then((response) => response.json())
+      .then((data) => setCourseData(data))
+      .catch((error) => console.error("Error fetching course data:", error));
+  }, []);
   // function for handle navigation
   const handleNavigation = (path, role, button) => {
     setActiveButton(button); // Set clicked button
@@ -123,9 +131,16 @@ const SelectUser = () => {
                   {course || "Select Course"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item eventKey="Bachelor of Science in Information Technology">
-                    BS of Information Technology
-                  </Dropdown.Item>
+                  {courseData.map((item) => {
+                    return (
+                      <Dropdown.Item
+                        key={item.course_id}
+                        eventKey={item.course_name}
+                      >
+                        {item.course_name}
+                      </Dropdown.Item>
+                    );
+                  })}
                 </Dropdown.Menu>
               </Dropdown>
             </Col>

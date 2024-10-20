@@ -25,6 +25,7 @@ const CreateAccount = () => {
   const [instructorPassword, setInstructorPassword] = useState("");
   // Instructor data array
   const [instructorData, setInstructorData] = useState([]);
+  const [instructorToBeEdited, setInstructorToBeEdited] = useState(null);
   // value to be edited
   const [editinstructorId, seteditInstructorId] = useState("");
   const [editinstructorName, seteditInstructorName] = useState("");
@@ -96,6 +97,7 @@ const CreateAccount = () => {
   ) => {
     handleShow(); // Show modal
     // Set values to be edited
+    setInstructorToBeEdited(instructorID);
     seteditInstructorId(instructorID);
     seteditInstructorName(instructorName);
     seteditInstructorUsername(instructorUsername);
@@ -110,7 +112,7 @@ const CreateAccount = () => {
       instructorUsername: editinstructorUsername,
       instructorPassword: editinstructorPassword,
     };
-    const id = editinstructorId;
+    const id = instructorToBeEdited;
     fetch(`http://localhost:5000/api/edit-instructor/${id}`, {
       method: "PUT",
       headers: {

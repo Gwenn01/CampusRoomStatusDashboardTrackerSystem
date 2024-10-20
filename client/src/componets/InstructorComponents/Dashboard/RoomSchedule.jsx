@@ -49,6 +49,7 @@ const RoomSchedule = () => {
                 <Table striped bordered hover className="table-schedule">
                   <thead>
                     <tr>
+                      <th>Course</th>
                       <th>Subject</th>
                       <th>Year</th>
                       <th>Section</th>
@@ -59,6 +60,7 @@ const RoomSchedule = () => {
                   <tbody>
                     {groupedSchedules[room].map((item) => (
                       <tr key={item.id}>
+                        <td>{item.course}</td>
                         <td>{item.subject_description}</td>
                         <td>{item.stud_year}</td>
                         <td>{item.section}</td>

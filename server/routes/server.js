@@ -177,18 +177,20 @@ route.get("/view-schedule/:course/:year/:section", async (req, res) => {
   }
 });
 // Data to be edited
-route.get("/view-schedule/:id", async (req, res) => {
-  const scheduleId = req.params.id; // Get the ID from the request parameters
+route.get("/view-schedulee/:id", async (req, res) => {
   try {
-    const scheduleTobeEdited = await editScheduleData(scheduleId);
-    res.status(200).json(scheduleTobeEdited);
+    const id = req.params.id;
+    const resultScheduleToBeEdited = await editScheduleData(id);
+    const convert = resultScheduleToBeEdited[0];
+    res.status(200).json(convert);
   } catch (error) {
-    res.statur(500).json({
+    res.status(500).json({
       error: "An error occurred while fetching data",
       details: error.message,
     });
   }
 });
+
 // Edit the data from schedule table
 route.put("/edit-schedule/:id", async (req, res) => {
   const scheduleId = req.params.id;
@@ -277,7 +279,7 @@ route.get("/view-exam-schedule/:course/:year/:section", async (req, res) => {
   }
 });
 // Data to be edited
-route.get("/view-exam-schedule/:id", async (req, res) => {
+route.get("/view-exam-schedulee/:id", async (req, res) => {
   const scheduleId = req.params.id; // Get the ID from the request parameters
   try {
     const examScheduleTobeEdited = await editExamScheduleData(scheduleId);

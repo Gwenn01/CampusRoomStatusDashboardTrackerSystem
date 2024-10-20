@@ -43,6 +43,7 @@ const InstructorSchedule = () => {
                 <Table striped bordered hover className="table-schedule">
                   <thead>
                     <tr>
+                      <th>Course</th>
                       <th>Subject</th>
                       <th>Year & Section</th>
                       <th>Schedule</th>
@@ -53,6 +54,7 @@ const InstructorSchedule = () => {
                   <tbody>
                     {instructorSchedule.map((item) => (
                       <tr key={item.id}>
+                        <td>{item.course}</td>
                         <td>{item.subject_description}</td>
                         <td>{`${item.stud_year} Section:${item.section}`}</td>
                         <td>{item.time_sched}</td>
