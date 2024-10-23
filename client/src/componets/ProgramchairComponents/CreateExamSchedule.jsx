@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Dropdown,
   Table,
@@ -13,6 +14,9 @@ import { toast } from "react-toastify";
 import "../../styles/createsched.css";
 
 const CreateSched = () => {
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
   // state for data from the database
   // curriculum data and filtered curriculum data
   const [data, setData] = useState([]);
@@ -48,7 +52,7 @@ const CreateSched = () => {
 
   // fetch the schedule data from the database
   useEffect(() => {
-    fetch("http://localhost:5000/api/view-schedule")
+    fetch("http://localhost:5000/api/view-exam-schedule")
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -59,12 +63,12 @@ const CreateSched = () => {
         setScheduleData(data);
       })
       .catch((error) => {
-        console.log("Error fetching data:", err);
+        console.log("Error fetching data:", error);
       });
   }, []);
   // fetch course data from the database
   useEffect(() => {
-    fetch("http://localhost:5000/api/course")
+    fetch(`http://localhost:5000/api/course/${user.course_id}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -75,12 +79,12 @@ const CreateSched = () => {
         setCourseData(data);
       })
       .catch((error) => {
-        console.log("Error fetching data:", err);
+        console.log("Error fetching data:", error);
       });
   }, []);
   // Fetch curriculum data from the database
   useEffect(() => {
-    fetch("http://localhost:5000/api/curriculum")
+    fetch(`http://localhost:5000/api/curriculum/${user.course_id}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -113,23 +117,6 @@ const CreateSched = () => {
   // Handle dropdown change
   const handleCourseChange = (e) => {
     setSelectedCourse(e);
-
-    let courseId;
-    let filteredCourse;
-    if (e === "BS Information Technology") {
-      courseId = 1;
-      filteredCourse = data.filter((item) => item.course_id === courseId);
-    } else if (e === "BS Computer Science") {
-      courseId = 2;
-      filteredCourse = data.filter((item) => item.course_id === courseId);
-    } else {
-      // If no specific course is selected, display full data
-      setDisplayData(data);
-      return; // Exit early to prevent further execution
-    }
-
-    setSelectedCourseId(courseId);
-    setDisplayData(filteredCourse);
   };
 
   const handleYearChange = (e) => {
@@ -245,6 +232,7 @@ const CreateSched = () => {
   const checkIfScheduleExists = async (newSchedule) => {
     // Using a simple check instead of map
     const scheduleExists = scheduleData.some((item) => {
+      S;
       return (
         item.time_sched === newSchedule.time_sched &&
         item.day_sched === newSchedule.day_sched &&
@@ -351,7 +339,7 @@ const CreateSched = () => {
               >
                 {selectedInstructor || "Select Instructor"}{" "}
               </Dropdown.Toggle>
-              <Dropdown.Menu>
+              <Dropdown.Menu className="scrollable-dropdown">
                 {instructorData.map((instructor) => {
                   return (
                     <Dropdown.Item
@@ -750,7 +738,7 @@ const CreateSched = () => {
               >
                 {selectedRoom}
               </Dropdown.Toggle>
-              <Dropdown.Menu>
+              <Dropdown.Menu className="scrollable-dropdown">
                 {[
                   "Room 1",
                   "Room 2",

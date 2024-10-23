@@ -32,9 +32,10 @@ route.get("/", (req, res) => {
   res.json("Hello World");
 });
 // COURSE API
-route.get("/course", async (req, res) => {
+route.get("/course/:id", async (req, res) => {
   try {
-    const resultCourse = await courseData();
+    const course_id = req.params.id;
+    const resultCourse = await courseData(course_id);
     res.status(200).json(resultCourse);
   } catch (error) {
     res.status(500).json({
@@ -62,9 +63,10 @@ route.get("/login", async (req, res) => {
   }
 });
 // CURRICULUM API
-route.get("/curriculum", async (req, res) => {
+route.get("/curriculum/:id", async (req, res) => {
   try {
-    const curriculum = await curriculumData();
+    const course_id = req.params.id;
+    const curriculum = await curriculumData(course_id);
     res.status(200).json(curriculum);
   } catch (error) {
     res.status(500).json({

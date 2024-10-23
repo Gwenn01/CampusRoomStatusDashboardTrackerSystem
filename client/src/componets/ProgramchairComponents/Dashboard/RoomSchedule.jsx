@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Table, Container, Row, Col, Card } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown";
 import "../../../styles/dashboard.css";
 
 const RoomSchedule = () => {
+  // user login data
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
   // State variables
   const [schedule, setSchedule] = useState([]);
   const [groupRoom, setGroupRoom] = useState({});
@@ -14,7 +19,9 @@ const RoomSchedule = () => {
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
       .then((response) => response.json())
-      .then((data) => setSchedule(data))
+      .then((data) =>
+        setSchedule(data.filter((item) => item.course_id == user.course_id))
+      )
       .catch((error) => console.error(error));
   }, []);
 

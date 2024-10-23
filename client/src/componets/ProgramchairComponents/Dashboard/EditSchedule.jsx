@@ -34,7 +34,7 @@ const EditSchedule = () => {
     })
       .then(() => toast.success("Schedule updated successfully"))
       .then(() => navigate("/programchair/dashboard/view-schedule"))
-      .catch((error) => console.error(error));
+      .catch((error) => console.log(error));
   };
 
   if (!scheduleItem) return <p>Loading...</p>;
@@ -49,26 +49,6 @@ const EditSchedule = () => {
             type="text"
             name="subject_description"
             value={scheduleItem.subject_description || ""}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group controlId="instructor">
-          <Form.Label>Instructor</Form.Label>
-          <Form.Control
-            type="text"
-            name="instructor"
-            value={scheduleItem.instructor || ""}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group controlId="instructor">
-          <Form.Label>Instructor ID</Form.Label>
-          <Form.Control
-            type="text"
-            name="instructor"
-            value={scheduleItem.instructor_id || ""}
             onChange={handleChange}
             required
           />

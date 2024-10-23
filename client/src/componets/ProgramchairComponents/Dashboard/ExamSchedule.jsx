@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Table, Container, Row, Col, Card, Button } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown";
 import "../../../styles/dashboard.css";
 import { toast } from "react-toastify";
 
 const ViewSchedule = () => {
+  // user login data
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const user = userData || JSON.parse(localStorage.getItem("userData"));
   const [course, setCourse] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState("All");
   const [schedule, setSchedule] = useState([]);
@@ -19,8 +23,10 @@ const ViewSchedule = () => {
     fetch("http://localhost:5000/api/view-exam-schedule")
       .then((response) => response.json())
       .then((data) => {
-        setSchedule(data);
-        setFilteredSchedule(data); // Initialize filtered schedule with full data
+        setSchedule(data.filter((item) => item.course_id == user.course_id));
+        setFilteredSchedule(
+          data.filter((item) => item.course_id == user.course_id)
+        ); // Initialize filtered schedule with full data
       })
       .catch((error) => console.error("Error fetching schedules:", error));
   };

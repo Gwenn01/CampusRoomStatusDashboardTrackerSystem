@@ -5,12 +5,14 @@ import { useLocation, Link, Route, Routes } from "react-router-dom";
 import Header from "../shared/partition/Header";
 import CreateSchedule from "../componets/ProgramchairComponents/CreateSched";
 import CreateExamSchedule from "../componets/ProgramchairComponents/CreateExamSchedule";
+import ManageCurriculum from "../componets/ProgramchairComponents/ManageCurriculum";
 import CreateAccount from "../componets/ProgramchairComponents/CreateAccount";
 import Dashboard from "../componets/ProgramchairComponents/Dashboard";
 import RoomStatus from "../componets/ProgramchairComponents/RoomStatus";
 // icons
 import createScheduleIcon from "../assets/createschedule.png";
 import createExamScheduleIcon from "../assets/createexam.png";
+import manageCurriculum from "../assets/curriculum.png";
 import createAccountIcon from "../assets/create-account.png";
 import dashboard from "../assets/dashboard.png";
 import roomStatus from "../assets/roomstatus.png";
@@ -38,9 +40,15 @@ const ProgramChairPage = () => {
                 <span>CREATE EXAM SCHEDULE</span>
               </Button>
             </Link>
+            <Link to="manage-curriculum">
+              <Button variant="secondary" className="btn-sidebar">
+                <img src={manageCurriculum} alt="manage curriculum" />
+                <span>MANAGE CURRICULUM</span>
+              </Button>
+            </Link>
             <Link to="create-account">
               <Button variant="secondary" className="btn-sidebar">
-                <img src={createAccountIcon} alt="create exam schedule" />
+                <img src={createAccountIcon} alt="create manage account" />
                 <span>CREATE MANAGE ACCOUNT</span>
               </Button>
             </Link>
@@ -68,6 +76,7 @@ const ProgramChairPage = () => {
               path="create-examschedule"
               element={<CreateExamSchedule />}
             />
+            <Route path="manage-curriculum" element={<ManageCurriculum />} />
             <Route path="create-account" element={<CreateAccount />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
             <Route path="room-status" element={<RoomStatus />} />

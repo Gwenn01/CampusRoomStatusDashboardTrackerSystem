@@ -87,7 +87,7 @@ const SelectUser = () => {
               activeButton === "Program Chair" ? "btn-selectuser-active" : ""
             }`}
             onClick={() =>
-              handleNavigation("/login", "Program Chair", "Program Chair")
+              handleNavigation("/login", "ProgramChair", "ProgramChair")
             }
           >
             PROGRAM CHAIR
