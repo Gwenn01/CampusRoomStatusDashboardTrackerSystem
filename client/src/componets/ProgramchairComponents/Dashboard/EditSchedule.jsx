@@ -53,6 +53,16 @@ const EditSchedule = () => {
             required
           />
         </Form.Group>
+        <Form.Group controlId="instructor">
+          <Form.Label>Instructor Name</Form.Label>
+          <Form.Control
+            type="text"
+            name="instructor"
+            value={scheduleItem.instructor || ""}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
         <Form.Group controlId="time_sched">
           <Form.Label>Time Schedule</Form.Label>
           <Form.Control

@@ -7,6 +7,9 @@ const editInstructor = require("./Query/Users/editInstructor");
 const deleteInstructor = require("./Query/Users/deleteInstructor");
 const programchairData = require("./Query/Users/programchairData");
 const curriculumData = require("./Query/Curriculum/curriculumData");
+const insertCurriculum = require("./Query/Curriculum/insertCurriculum");
+const updateCurriculum = require("./Query/Curriculum/updateCurriculum");
+const deleteCurriculum = require("./Query/Curriculum/deleteCurriculum");
 const insertSchedule = require("./Query/Exam & Schedule/insertSchedule");
 const scheduleData = require("./Query/Exam & Schedule/scheduleData");
 const getSheduleDataByInstructor = require("./Query/Exam & Schedule/getScheduleByInstructor");
@@ -75,6 +78,52 @@ route.get("/curriculum/:id", async (req, res) => {
     });
   }
 });
+// insert curriculum
+route.post("/insert-curriculum", async (req, res) => {
+  try {
+    const newCurriculumData = req.body;
+    const resultInsertCurriculum = await insertCurriculum(newCurriculumData);
+
+    return res.status(200).json(resultInsertCurriculum);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while inserting data",
+      details: error.message,
+    });
+  }
+});
+// edit curriculum
+route.put("/update-curriculum/:id", async (req, res) => {
+  try {
+    const curriculum_id = req.params.id;
+    const updatedCurriculumData = req.body;
+    const resultUpdateCurriculum = await updateCurriculum(
+      curriculum_id,
+      updatedCurriculumData
+    );
+    return res.status(200).json(resultUpdateCurriculum);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+
+// delete curriculum
+route.delete("/delete-curriculum/:id", async (req, res) => {
+  try {
+    const curriculum_id = req.params.id;
+    const resultDeleteCurriculum = await deleteCurriculum(curriculum_id);
+    return res.status(200).json(resultDeleteCurriculum);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+
 // INSTRUCTOR API
 route.get("/instructor", async (req, res) => {
   try {

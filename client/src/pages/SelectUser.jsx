@@ -90,7 +90,7 @@ const SelectUser = () => {
               handleNavigation("/login", "ProgramChair", "ProgramChair")
             }
           >
-            PROGRAM CHAIR
+            PROGRAMCHAIR
           </Button>
           <Button
             variant="secondary"

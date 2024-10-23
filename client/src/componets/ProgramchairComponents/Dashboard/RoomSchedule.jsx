@@ -10,11 +10,28 @@ const RoomSchedule = () => {
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
   // State variables
+  const [courseData, setCourseData] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const [groupRoom, setGroupRoom] = useState({});
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState("Select Room");
 
+  // get the data from database
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/course/${user.course_id}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setCourseData(data);
+      })
+      .catch((error) => {
+        console.log("Error fetching course data:", error);
+      });
+  }, []);
   // Fetch schedule data from the database
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
@@ -64,8 +81,11 @@ const RoomSchedule = () => {
 
   return (
     <Container fluid style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
-      <h1 className="text-center mb-4">Room Schedule</h1>
-      <h4 className="text-center mb-4">CCIT Room and Laboratory</h4>
+      <h1 className="text-center mb-1">Room Schedule</h1>
+      <h1 className="text-center mb-1">
+        {courseData.length > 0 ? `${courseData[0].course_name}` : "Loading..."}
+      </h1>
+      <h4 className="text-center mb-3">CCIT Room and Laboratory</h4>
       <Row>
         <Col md={10} className="mx-auto">
           <Row className="mb-4">
@@ -97,7 +117,6 @@ const RoomSchedule = () => {
                 <Table striped bordered hover className="table-schedule">
                   <thead>
                     <tr>
-                      <th>Course</th>
                       <th>Subject</th>
                       <th>Instructor</th>
                       <th>Year</th>
@@ -109,7 +128,6 @@ const RoomSchedule = () => {
                   <tbody>
                     {filteredSchedulesForRoom[room]?.map((item) => (
                       <tr key={item.id}>
-                        <td>{item.course}</td>
                         <td>{item.subject_description}</td>
                         <td>{item.instructor}</td>
                         <td>{item.stud_year}</td>
