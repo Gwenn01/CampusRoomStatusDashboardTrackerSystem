@@ -24,7 +24,29 @@ const ViewSchedule = () => {
     // Fetch data on component mount
     fetchData();
   }, []);
+  // functions to sort the schedule by date and time
+  const convertTo24HourFormat = (time) => {
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
 
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+  const compareTime = (timeA, timeB) => {
+    const a = convertTo24HourFormat(timeA);
+    const b = convertTo24HourFormat(timeB);
+
+    if (a.hours !== b.hours) {
+      return a.hours - b.hours;
+    } else {
+      return a.minutes - b.minutes;
+    }
+  };
   // Group schedules by course, year, and section
   const groupedSchedules = schedule.reduce((acc, item) => {
     const course = item.course;
@@ -85,16 +107,18 @@ const ViewSchedule = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {groupedSchedules[course][year][section].map(
-                                (item) => (
+                              {groupedSchedules[course][year][section]
+                                .sort((a, b) =>
+                                  compareTime(a.time_sched, b.time_sched)
+                                )
+                                .map((item) => (
                                   <tr key={item.id}>
                                     <td>{item.subject_description}</td>
                                     <td>{item.time_sched}</td>
                                     <td>{item.room}</td>
                                     <td>{item.day_sched}</td>
                                   </tr>
-                                )
-                              )}
+                                ))}
                             </tbody>
                           </Table>
                         </Card.Body>

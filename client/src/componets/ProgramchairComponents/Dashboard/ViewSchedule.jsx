@@ -91,6 +91,34 @@ const ViewSchedule = () => {
     setSelectedSection(eventKey);
   };
 
+  // funxtion to filter the schedule by year and section
+  // Helper function to convert 12-hour time format (e.g., "7:00 AM") to 24-hour format
+  const convertTo24HourFormat = (time) => {
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+
+  // Helper function to compare two time schedules
+  const compareTime = (timeA, timeB) => {
+    const a = convertTo24HourFormat(timeA);
+    const b = convertTo24HourFormat(timeB);
+
+    if (a.hours !== b.hours) {
+      return a.hours - b.hours;
+    } else {
+      return a.minutes - b.minutes;
+    }
+  };
+
+  // Filter and sort the schedules
   const filteredSchedules = Object.keys(groupedSchedules)
     .filter((year) => selectedYear === "Select Year" || year === selectedYear)
     .reduce((yearAcc, year) => {
@@ -100,7 +128,12 @@ const ViewSchedule = () => {
             selectedSection === "Select Section" || section === selectedSection
         )
         .reduce((secAcc, section) => {
-          secAcc[section] = groupedSchedules[year][section];
+          // Sort schedules by time
+          const sortedSchedules = groupedSchedules[year][section].sort((a, b) =>
+            compareTime(a.time_sched, b.time_sched)
+          );
+
+          secAcc[section] = sortedSchedules;
           return secAcc;
         }, {});
 

@@ -1,6 +1,7 @@
 const route = require("express").Router();
 const dbCon = require("./connection");
 // querying data in the databse
+const allCourseData = require("./Query/Course/allCourse");
 const courseData = require("./Query/Course/getCourse");
 const instructorData = require("./Query/Users/instructorData");
 const editInstructor = require("./Query/Users/editInstructor");
@@ -35,6 +36,17 @@ route.get("/", (req, res) => {
   res.json("Hello World");
 });
 // COURSE API
+route.get("/course", async (req, res) => {
+  try {
+    const resultCourse = await allCourseData();
+    res.status(200).json(resultCourse);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
 route.get("/course/:id", async (req, res) => {
   try {
     const course_id = req.params.id;
@@ -43,7 +55,7 @@ route.get("/course/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "An error occurred while fetching data",
-      details: err.message,
+      details: error.message,
     });
   }
 });

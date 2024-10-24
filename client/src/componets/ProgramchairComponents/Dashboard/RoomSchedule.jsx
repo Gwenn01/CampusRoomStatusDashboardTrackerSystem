@@ -9,6 +9,7 @@ const RoomSchedule = () => {
   const location = useLocation();
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
+
   // State variables
   const [courseData, setCourseData] = useState([]);
   const [schedule, setSchedule] = useState([]);
@@ -16,7 +17,7 @@ const RoomSchedule = () => {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState("Select Room");
 
-  // get the data from database
+  // Fetch course data
   useEffect(() => {
     fetch(`http://localhost:5000/api/course/${user.course_id}`)
       .then((res) => {
@@ -25,14 +26,11 @@ const RoomSchedule = () => {
         }
         return res.json();
       })
-      .then((data) => {
-        setCourseData(data);
-      })
-      .catch((error) => {
-        console.log("Error fetching course data:", error);
-      });
+      .then((data) => setCourseData(data))
+      .catch((error) => console.log("Error fetching course data:", error));
   }, []);
-  // Fetch schedule data from the database
+
+  // Fetch schedule data
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
       .then((response) => response.json())
@@ -42,7 +40,7 @@ const RoomSchedule = () => {
       .catch((error) => console.error(error));
   }, []);
 
-  // Fetch room data from the database
+  // Fetch room data
   useEffect(() => {
     fetch("http://localhost:5000/api/get-rooms")
       .then((response) => response.json())
@@ -50,7 +48,21 @@ const RoomSchedule = () => {
       .catch((error) => console.error(error));
   }, []);
 
-  // Group schedules by room
+  // function to sort the time in the room schedule
+  const compareTime = (a, b) => {
+    const parseTime = (time) => {
+      const [timePart, modifier] = time.split(" ");
+      let [hours, minutes] = timePart.split(":").map(Number);
+      if (modifier === "PM" && hours !== 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
+      return hours * 60 + minutes; // Convert to total minutes for comparison
+    };
+    const [startTimeA] = a.time_sched.split(" - ");
+    const [startTimeB] = b.time_sched.split(" - ");
+    return parseTime(startTimeA) - parseTime(startTimeB);
+  };
+
+  // Group and sort schedules by room and then by time
   const groupTheRoom = () => {
     const groupedSchedules = schedule.reduce((acc, item) => {
       const room = item.room;
@@ -60,6 +72,10 @@ const RoomSchedule = () => {
       acc[room].push(item);
       return acc;
     }, {});
+    // Sort the schedules within each room by time
+    Object.keys(groupedSchedules).forEach((room) => {
+      groupedSchedules[room] = groupedSchedules[room].sort(compareTime);
+    });
     setGroupRoom(groupedSchedules);
   };
 
@@ -78,6 +94,33 @@ const RoomSchedule = () => {
     selectedRoom === "Select Room"
       ? groupRoom // show all if no room is selected
       : { [selectedRoom]: groupRoom[selectedRoom] }; // filter schedules for the selected room
+
+  // Custom sort function to handle numeric room sorting and prioritize "rooms" over "labs"
+  const customRoomSort = (a, b) => {
+    const isRoomA = a.toLowerCase().includes("room");
+    const isRoomB = b.toLowerCase().includes("room");
+
+    // Prioritize "room" over "lab"
+    if (isRoomA && !isRoomB) return -1;
+    if (!isRoomA && isRoomB) return 1;
+
+    // Extract numeric values from room names for comparison
+    const extractNumber = (name) => {
+      const match = name.match(/\d+/);
+      return match ? parseInt(match[0], 10) : 0;
+    };
+
+    const numA = extractNumber(a);
+    const numB = extractNumber(b);
+
+    // Compare numerically if both are rooms or both are labs
+    return numA - numB;
+  };
+
+  // Sort room names based on the custom sort
+  const sortedRooms = Object.keys(filteredSchedulesForRoom).sort(
+    customRoomSort
+  );
 
   return (
     <Container fluid style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
@@ -98,7 +141,9 @@ const RoomSchedule = () => {
                 >
                   {selectedRoom || "Select Room"}
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                <Dropdown.Menu
+                  style={{ maxHeight: "200px", overflowY: "auto" }}
+                >
                   {rooms.map((room) => (
                     <Dropdown.Item key={room.id} eventKey={room.roomName}>
                       {room.roomName}
@@ -108,7 +153,7 @@ const RoomSchedule = () => {
               </Dropdown>
             </Col>
           </Row>
-          {Object.keys(filteredSchedulesForRoom).map((room) => (
+          {sortedRooms.map((room) => (
             <Card key={room} className="mb-4 shadow-sm card-table">
               <Card.Header className="bg-primary text-white text-center bg-secondary">
                 <h5 className="mb-0">Room: {room}</h5>

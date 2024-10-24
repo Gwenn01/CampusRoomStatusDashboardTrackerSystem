@@ -23,6 +23,29 @@ const InstructorSchedule = () => {
   const instructorSchedule = schedule.filter(
     (item) => item.instructor_id === user.instructor_id
   );
+  // functions to sort the schedule by date and time
+  const convertTo24HourFormat = (time) => {
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+  const compareTime = (timeA, timeB) => {
+    const a = convertTo24HourFormat(timeA);
+    const b = convertTo24HourFormat(timeB);
+
+    if (a.hours !== b.hours) {
+      return a.hours - b.hours;
+    } else {
+      return a.minutes - b.minutes;
+    }
+  };
 
   return (
     <Container
@@ -30,7 +53,7 @@ const InstructorSchedule = () => {
       className="p-4 w-100"
       style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}
     >
-      <h1 className="text-center mb-4">Instructor Schedule</h1>
+      <h1 className="text-center mb-1">Instructor Schedule</h1>
       <p className="text-center mb-4">{user.instructor_name}</p>
       <Row className="w-100">
         <Col md={10} className="mx-auto">
@@ -52,16 +75,18 @@ const InstructorSchedule = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {instructorSchedule.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.course}</td>
-                        <td>{item.subject_description}</td>
-                        <td>{`${item.stud_year} Section:${item.section}`}</td>
-                        <td>{item.time_sched}</td>
-                        <td>{item.room}</td>
-                        <td>{item.day_sched}</td>
-                      </tr>
-                    ))}
+                    {instructorSchedule
+                      .sort((a, b) => compareTime(a.time_sched, b.time_sched))
+                      .map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.course}</td>
+                          <td>{item.subject_description}</td>
+                          <td>{`${item.stud_year} Section:${item.section}`}</td>
+                          <td>{item.time_sched}</td>
+                          <td>{item.room}</td>
+                          <td>{item.day_sched}</td>
+                        </tr>
+                      ))}
                   </tbody>
                 </Table>
               </Card.Body>

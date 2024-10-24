@@ -9,6 +9,7 @@ const InstructorSchedule = () => {
   const location = useLocation();
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
+
   // state variables
   const [courseData, setCourseData] = useState([]);
   const [schedule, setSchedule] = useState([]);
@@ -33,6 +34,7 @@ const InstructorSchedule = () => {
         console.log("Error fetching course data:", error);
       });
   }, []);
+
   // fetching schedule data from database
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
@@ -50,17 +52,40 @@ const InstructorSchedule = () => {
       .then((data) => setInstructor(data))
       .catch((error) => console.error(error));
   }, []);
-
-  // Group schedules by instructor
+  // function to sort the time in schedule
+  const compareTime = (a, b) => {
+    const parseTimeRange = (timeStr) => {
+      // Split start and end times (e.g., "12:30 PM - 2:00 PM")
+      const [startTime] = timeStr.split(" - ");
+      // Function to convert time string into 24-hour format for comparison
+      const parseTime = (time) => {
+        let [timePart, modifier] = time.split(" ");
+        let [hours, minutes] = timePart.split(":");
+        hours = parseInt(hours, 10);
+        minutes = parseInt(minutes, 10);
+        if (modifier === "PM" && hours !== 12) {
+          hours += 12;
+        } else if (modifier === "AM" && hours === 12) {
+          hours = 0;
+        }
+        return hours * 60 + minutes; // Convert to total minutes for easier comparison
+      };
+      return parseTime(startTime); // Compare based on the start time of the range
+    };
+    return parseTimeRange(a) - parseTimeRange(b);
+  };
+  // Group schedules by instructor and sort by time
   const groupTheSchedules = () => {
-    const groupedSchedules = schedule.reduce((acc, item) => {
-      const instructor = item.instructor;
-      if (!acc[instructor]) {
-        acc[instructor] = [];
-      }
-      acc[instructor].push(item);
-      return acc;
-    }, {});
+    const groupedSchedules = schedule
+      .sort((a, b) => compareTime(a.time_sched, b.time_sched)) // Sort schedules by time first
+      .reduce((acc, item) => {
+        const instructor = item.instructor;
+        if (!acc[instructor]) {
+          acc[instructor] = [];
+        }
+        acc[instructor].push(item);
+        return acc;
+      }, {});
     setGroupInstructor(groupedSchedules);
   };
 
@@ -102,7 +127,9 @@ const InstructorSchedule = () => {
                 >
                   {selectedInstructor || "Select Instructor"}
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                <Dropdown.Menu
+                  style={{ maxHeight: "200px", overflowY: "auto" }}
+                >
                   {instructor.map((instructor) => (
                     <Dropdown.Item
                       key={instructor.instructor_id}
@@ -128,17 +155,22 @@ const InstructorSchedule = () => {
                       <th>Schedule</th>
                       <th>Room</th>
                       <th>Day</th>
+                      <th>Year</th>
+                      <th>Section</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredSchedulesForInstructor[instructor].map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.subject_description}</td>
-                        <td>{item.time_sched}</td>
-                        <td>{item.room}</td>
-                        <td>{item.day_sched}</td>
-                      </tr>
-                    ))}
+                    {filteredSchedulesForInstructor[instructor] &&
+                      filteredSchedulesForInstructor[instructor].map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.subject_description}</td>
+                          <td>{item.time_sched}</td>
+                          <td>{item.room}</td>
+                          <td>{item.day_sched}</td>
+                          <td>{item.srud_year}</td>
+                          <td>{item.section}</td>
+                        </tr>
+                      ))}
                   </tbody>
                 </Table>
               </Card.Body>

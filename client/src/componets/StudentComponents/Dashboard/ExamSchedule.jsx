@@ -26,7 +26,29 @@ const ViewExamSchedule = () => {
     // Fetch data when component loads
     fetchData();
   }, []);
+  // functions to sort the schedule by date and time
+  const convertTo24HourFormat = (time) => {
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
 
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+  const compareTime = (timeA, timeB) => {
+    const a = convertTo24HourFormat(timeA);
+    const b = convertTo24HourFormat(timeB);
+
+    if (a.hours !== b.hours) {
+      return a.hours - b.hours;
+    } else {
+      return a.minutes - b.minutes;
+    }
+  };
   // Group schedules by year and section
   const groupedSchedules = examSchedule.reduce((acc, item) => {
     const year = item.stud_year;
@@ -74,15 +96,19 @@ const ViewExamSchedule = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {groupedSchedules[year][section].map((item) => (
-                          <tr key={item.id}>
-                            <td>{item.subject_description}</td>
-                            <td>{item.time_sched}</td>
-                            <td>{item.instructor}</td>
-                            <td>{item.room}</td>
-                            <td>{item.day_sched}</td>
-                          </tr>
-                        ))}
+                        {groupedSchedules[year][section]
+                          .sort((a, b) =>
+                            compareTime(a.time_sched, b.time_sched)
+                          )
+                          .map((item) => (
+                            <tr key={item.id}>
+                              <td>{item.subject_description}</td>
+                              <td>{item.time_sched}</td>
+                              <td>{item.instructor}</td>
+                              <td>{item.room}</td>
+                              <td>{item.day_sched}</td>
+                            </tr>
+                          ))}
                       </tbody>
                     </Table>
                   </Card.Body>

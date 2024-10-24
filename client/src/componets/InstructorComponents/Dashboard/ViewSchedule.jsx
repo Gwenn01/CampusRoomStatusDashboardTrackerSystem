@@ -5,25 +5,59 @@ import "../../../styles/dashboard.css";
 
 const ViewSchedule = () => {
   const [schedule, setSchedule] = useState([]);
-  // Identify the user
+  const [loading, setLoading] = useState(true); // Added loading state
+  const [error, setError] = useState(null); // Added error state
   const location = useLocation();
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
 
-  // Function to fetch schedules from the API
   const fetchData = () => {
     fetch(`http://localhost:5000/api/view-schedule/${user.instructor_name}`)
-      .then((response) => response.json())
-      .then((data) => setSchedule(data))
-      .catch((error) => console.error(error));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setSchedule(data);
+        setLoading(false); // Set loading to false after data is fetched
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+        setError(error.message);
+        setLoading(false); // Set loading to false on error
+      });
   };
 
   useEffect(() => {
-    // Fetch data on component mount
     fetchData();
   }, []);
 
-  // Group schedules by course, year, and section
+  // functions to sort the schedule by date and time
+  const convertTo24HourFormat = (time) => {
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+  const compareTime = (timeA, timeB) => {
+    const a = convertTo24HourFormat(timeA);
+    const b = convertTo24HourFormat(timeB);
+
+    if (a.hours !== b.hours) {
+      return a.hours - b.hours;
+    } else {
+      return a.minutes - b.minutes;
+    }
+  };
+
   const groupedSchedules = schedule.reduce((acc, item) => {
     const course = item.course;
     const year = item.stud_year;
@@ -43,20 +77,26 @@ const ViewSchedule = () => {
     return acc;
   }, {});
 
+  if (loading) {
+    return <div>Loading...</div>; // Display loading message while fetching data
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // Display error message if there's an error
+  }
+
   return (
     <Container
       fluid
       className="p-4"
       style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}
     >
-      <h1 className="text-center mb-4">View Schedule</h1>
+      <h1 className="text-center mb-1">View Schedule</h1>
       <Row>
         <Col md={10} className="mx-auto">
           {Object.keys(groupedSchedules).map((course) => (
             <div key={course}>
-              <h4 className="text-center text-primary mb-4">
-                Course: {course}
-              </h4>
+              <h4 className="text-center mb-4">Course: {course}</h4>
               {Object.keys(groupedSchedules[course]).map((year) => (
                 <div key={year}>
                   {Object.keys(groupedSchedules[course][year]).map(
@@ -83,16 +123,18 @@ const ViewSchedule = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {groupedSchedules[course][year][section].map(
-                                (item) => (
+                              {groupedSchedules[course][year][section]
+                                .sort((a, b) =>
+                                  compareTime(a.time_sched, b.time_sched)
+                                )
+                                .map((item) => (
                                   <tr key={item.id}>
                                     <td>{item.subject_description}</td>
                                     <td>{item.time_sched}</td>
                                     <td>{item.room}</td>
                                     <td>{item.day_sched}</td>
                                   </tr>
-                                )
-                              )}
+                                ))}
                             </tbody>
                           </Table>
                         </Card.Body>

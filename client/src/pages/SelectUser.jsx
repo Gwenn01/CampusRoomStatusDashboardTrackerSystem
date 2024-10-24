@@ -33,11 +33,7 @@ const SelectUser = () => {
   // function for handle navigation
   const handleNavigation = (path, role, button) => {
     setActiveButton(button); // Set clicked button
-    setLoading(true); // Start spinner
-    setTimeout(() => {
-      navigate(path, { state: { role } }); // Navigate after delay
-      setLoading(false); // Stop spinner
-    }, 1000);
+    navigate(path, { state: { role } }); // Navigate after delay
   };
   // function for handle navigation for STUDENTS
   const handleNavigationStudent = (e) => {
