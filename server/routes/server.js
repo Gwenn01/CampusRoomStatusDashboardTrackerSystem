@@ -16,6 +16,7 @@ const scheduleData = require("./Query/Exam & Schedule/scheduleData");
 const getSheduleDataByInstructor = require("./Query/Exam & Schedule/getScheduleByInstructor");
 const getScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getScheduleDataByCourseYearSection");
 const getExamScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getExamScheduleDataByCourseYearSection");
+const getScheduleTodayInstructor = require("./Query/Exam & Schedule/getScheduleTodayInstructor");
 const editScheduleData = require("./Query/Exam & Schedule/editScheduleData");
 const editSchedule = require("./Query/Exam & Schedule/editSchedule");
 const deleteSchedule = require("./Query/Exam & Schedule/deleteSchedule");
@@ -246,6 +247,23 @@ route.get("/view-schedulee/:id", async (req, res) => {
     const resultScheduleToBeEdited = await editScheduleData(id);
     const convert = resultScheduleToBeEdited[0];
     res.status(200).json(convert);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+// get schedule base on today and instructor
+route.get("/view-schedule/:instructor/:today", async (req, res) => {
+  try {
+    const instructor = req.params.instructor;
+    const today = req.params.today;
+    const resultScheduleToday = await getScheduleTodayInstructor(
+      instructor,
+      today
+    );
+    res.status(200).json(resultScheduleToday);
   } catch (error) {
     res.status(500).json({
       error: "An error occurred while fetching data",

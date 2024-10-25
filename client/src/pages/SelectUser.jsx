@@ -8,6 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import logo from "../assets/logo.png";
 import Spinner from "../componets/Spinner";
 import { toast } from "react-toastify";
+import "../styles/responsive.css";
 
 const SelectUser = () => {
   // handle the modal for the  STUDENTS

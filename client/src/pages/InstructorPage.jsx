@@ -4,9 +4,11 @@ import Button from "react-bootstrap/Button";
 import "../styles/instructor.css";
 import Header from "../shared/partition/Header";
 import Dashboard from "../componets/InstructorComponents/Dashboard";
+import TodaySchedule from "../componets/InstructorComponents/TodaySchedule";
 import RoomStatus from "../componets/InstructorComponents/Roomstatus";
 // icons
 import dashboard from "../assets/dashboard.png";
+import todaySched from "../assets/today-schedule.png";
 import roomStatus from "../assets/roomstatus.png";
 
 const InstructorPage = () => {
@@ -26,6 +28,12 @@ const InstructorPage = () => {
                 <span>DASHBOARD</span>
               </Button>
             </Link>
+            <Link to="today-schedule">
+              <Button variant="secondary" className="btn-sidebar">
+                <img src={todaySched} alt="dashboard" />
+                <span>TODAY SCHEDULE</span>
+              </Button>
+            </Link>
             <Link to="room-status">
               <Button variant="secondary" className="btn-sidebar">
                 <img src={roomStatus} alt="room status" />
@@ -40,6 +48,7 @@ const InstructorPage = () => {
           <Routes>
             <Route index element={<RoomStatus />} />
             <Route path="dashboard/*" element={<Dashboard />} />
+            <Route path="today-schedule" element={<TodaySchedule />} />
             <Route path="room-status" element={<RoomStatus />} />
           </Routes>
         </div>
