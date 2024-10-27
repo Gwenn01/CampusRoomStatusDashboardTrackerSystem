@@ -63,14 +63,6 @@ const Dashboard = () => {
                   Reports
                 </Button>
               </Link>
-              <Link to="events" className="w-100">
-                <Button
-                  variant="secondary"
-                  className="btn-dashboard w-100 custom-btn"
-                >
-                  Events
-                </Button>
-              </Link>
             </ButtonGroup>
           </Col>
         </Row>

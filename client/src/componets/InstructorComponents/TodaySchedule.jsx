@@ -27,13 +27,99 @@ const TodaySchedule = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [schedule, setSchedule] = useState([]);
   const [dayToday, setDayToday] = useState(formatDay(new Date()));
+  const [posibleRoom, setPosibleRoom] = useState([]);
   // fetch the data from databse
   useEffect(() => {
     if (user?.instructor_id && dayToday) {
+      const fetchSchedule = async () => {
+        try {
+          const instructorSchedResponse = await fetch(
+            `http://localhost:5000/api/view-schedule/${user.instructor_id}/${dayToday}`
+          );
+
+          if (!instructorSchedResponse.ok) {
+            throw new Error(
+              `Error fetching instructor schedule: ${instructorSchedResponse.statusText}`
+            );
+          }
+
+          const instructorSched = await instructorSchedResponse.json();
+
+          const todaySchedResponse = await fetch(
+            `http://localhost:5000/api/today-schedule/${dayToday}`
+          );
+
+          if (!todaySchedResponse.ok) {
+            throw new Error(
+              `Error fetching today's schedule: ${todaySchedResponse.statusText}`
+            );
+          }
+
+          const todaySched = await todaySchedResponse.json();
+
+          setSchedule(instructorSched);
+
+          const possibleRooms = {}; // Initialize an empty object to hold possible rooms
+
+          instructorSched.forEach((schedIns) => {
+            const possible = new Set(); // Use a Set to avoid duplicates
+            todaySched.forEach((sched) => {
+              const endTime = convertTo24Hour(getEndTime(sched.time_sched));
+              const instructorEndTime = convertTo24Hour(
+                getEndTime(schedIns.time_sched)
+              );
+
+              if (
+                parseInt(endTime.substring(0, 2)) >=
+                parseInt(instructorEndTime.substring(0, 2))
+              ) {
+                possible.add(sched.room); // Add room to the Set
+              }
+            });
+            // Create a key using both subject description and section
+            const key = `${schedIns.subject_description}-${schedIns.section}`;
+            possibleRooms[key] = Array.from(possible);
+          });
+          setPosibleRoom(possibleRooms); // Set the state with the possible rooms
+        } catch (error) {
+          console.error("Fetch error: ", error);
+          toast.error(
+            "Failed to load rooms and schedule data: " + error.message
+          );
+        }
+      };
       fetchSchedule();
     }
   }, [user?.instructor_id, dayToday]);
 
+  //
+  function getEndTime(schedule) {
+    // Split the string by the '-' character and trim spaces
+    const parts = schedule.split("-");
+    // Return the second part after trimming whitespace
+    return parts[1].trim();
+  }
+  // convert the time
+  function convertTo24Hour(timeStr) {
+    // Split the time string into parts
+    const [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":");
+    // Convert hours and minutes to numbers
+    hours = parseInt(hours, 10);
+    minutes = parseInt(minutes, 10);
+    // Adjust hours based on AM/PM
+    if (modifier === "PM" && hours < 12) {
+      hours += 12; // Convert PM hours to 24-hour format
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0; // Convert midnight (12 AM) to 0 hours
+    }
+    // Format hours and minutes to ensure two digits
+    const formattedHours = String(hours).padStart(2, "0");
+    const formattedMinutes = String(minutes).padStart(2, "0");
+
+    return `${formattedHours}:${formattedMinutes}`;
+  }
+  // for date in the uuper right corner
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -51,15 +137,6 @@ const TodaySchedule = () => {
     return () => clearInterval(checkDayChange);
   }, [dayToday]);
 
-  // fetch the schedule from the database
-  const fetchSchedule = () => {
-    fetch(
-      `http://localhost:5000/api/view-schedule/${user.instructor_id}/${dayToday}`
-    )
-      .then((response) => response.json())
-      .then((data) => setSchedule(data))
-      .catch(() => toast.error("Error fetching schedule"));
-  };
   // sort the schedule by time
   // functions to sort the schedule by date and time
   const convertTo24HourFormat = (time) => {
@@ -131,18 +208,24 @@ const TodaySchedule = () => {
             <tbody>
               {schedule
                 .sort((a, b) => compareTime(a.time_sched, b.time_sched))
-                .map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.course}</td>
-                    <td>{item.subject_description}</td>
-                    <td>
-                      {item.stud_year} {item.section}
-                    </td>
-                    <td>{item.time_sched}</td>
-                    <td>{item.room}</td>
-                    <td>{item.possible_room_available || "N/A"}</td>
-                  </tr>
-                ))}
+                .map((item, index) => {
+                  // Create the key using subject_description and section
+                  const key = `${item.subject_description}-${item.section}`;
+                  return (
+                    <tr key={index}>
+                      <td>{item.course}</td>
+                      <td>{item.subject_description}</td>
+                      <td>
+                        {item.stud_year} {item.section}
+                      </td>
+                      <td>{item.time_sched}</td>
+                      <td>{item.room}</td>
+                      <td>
+                        {posibleRoom[key] ? posibleRoom[key].join(", ") : "N/A"}
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </Table>
         </Col>

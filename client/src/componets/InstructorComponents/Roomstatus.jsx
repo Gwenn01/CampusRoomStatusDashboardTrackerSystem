@@ -10,6 +10,11 @@ import "../../styles/roomstatus.css";
 import vacantIcon from "../../assets/vacant.png";
 import occupiedIcon from "../../assets/occupied.png";
 
+// helper function to get day only from date
+const getDayOnly = (date) => {
+  return date.toLocaleDateString("en-US", { weekday: "long" });
+};
+
 const RoomStatus = () => {
   // user sata
   const location = useLocation();
@@ -20,6 +25,7 @@ const RoomStatus = () => {
   const [schedule, setSchedule] = useState([]);
   const [filteredSchedule, setFilteredSchedule] = useState([]);
   const [rooms, setRooms] = useState([]);
+  const [scheduleToday, setScheduleToday] = useState([]);
   // variables for view schedule details of room
   const [show, setShow] = useState(false);
   const [selectedRoomSchedule, setSelectedRoomSchedule] = useState([]);
@@ -27,24 +33,55 @@ const RoomStatus = () => {
   const [selectedRoomName, setSelectedRoomName] = useState("");
 
   const handleClose = () => setShow(false);
-  // fetch the rooms in the databse
-  const fetchRooms = () => {
-    fetch("http://localhost:5000/api/get-rooms")
-      .then((response) => response.json())
-      .then((data) => setRooms(data))
-      .catch((error) => console.error(error));
-  };
 
-  useEffect(() => {
-    fetchRooms();
-  }, []);
-  // ffetch the schedule in the database
+  // fetch the schedule in the database
   useEffect(() => {
     fetch("http://localhost:5000/api/view-schedule")
       .then((response) => response.json())
       .then((data) => setSchedule(data))
       .catch((error) => console.error(error));
   }, []);
+  // fetch the schedule from the database base on the specific data
+  useEffect(() => {
+    const fetchRoomsAndSchedule = async () => {
+      try {
+        // date today
+        const today = new Date();
+        const dayToday = formatDay(today); // Get the current day
+        // responese getting the data
+        const roomsResponse = await fetch(
+          "http://localhost:5000/api/get-rooms"
+        );
+        const roomsData = await roomsResponse.json();
+
+        const scheduleResponse = await fetch(
+          `http://localhost:5000/api/view-schedule/${user.instructor_id}/${dayToday}`
+        );
+        const scheduleData = await scheduleResponse.json();
+
+        // Map and merge the data to update rooms with schedule info
+        const updatedRooms = roomsData.map((room) => {
+          const roomSchedule = scheduleData.find(
+            (schedule) => schedule.room === room.roomName
+          );
+
+          return {
+            ...room,
+            instructorScheduleAt: roomSchedule
+              ? `Schedule At: ${roomSchedule.time_sched}`
+              : "No Schedule for this room ",
+          };
+        });
+
+        setRooms(updatedRooms);
+      } catch (error) {
+        console.error("Error fetching rooms or schedule", error);
+        toast.error("Failed to load rooms and schedule data");
+      }
+    };
+
+    fetchRoomsAndSchedule();
+  }, [user.instructor_id]);
   //function to get the date
   const formatDay = (date) => {
     const options = {
@@ -179,7 +216,7 @@ const RoomStatus = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
+  // get the date and current time
   const formatDate = (date) => {
     const options = {
       weekday: "long",
@@ -201,12 +238,12 @@ const RoomStatus = () => {
     };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
-
+  // get the day today
   const handleShowDetails = (roomName) => {
     const roomSchedule = filteredSchedule.filter(
       (item) => item.room === roomName
     );
-
+    // set the values
     setSelectedRoomSchedule(roomSchedule);
     setSelectedRoomName(roomName);
     setShow(true);
@@ -260,6 +297,10 @@ const RoomStatus = () => {
             >
               <Card.Body>
                 <Card.Title className="room-title">{room.roomName}</Card.Title>
+                <span style={{ fontSize: "0.7rem" }}>
+                  {room.instructorScheduleAt}
+                </span>
+                <br />
                 <span>{room.roomStatus}</span>
                 <Card.Text className="room-body ">
                   <img

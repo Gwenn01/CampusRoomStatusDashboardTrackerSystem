@@ -17,6 +17,7 @@ const getSheduleDataByInstructor = require("./Query/Exam & Schedule/getScheduleB
 const getScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getScheduleDataByCourseYearSection");
 const getExamScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getExamScheduleDataByCourseYearSection");
 const getScheduleTodayInstructor = require("./Query/Exam & Schedule/getScheduleTodayInstructor");
+const getScheduleToday = require("./Query/Exam & Schedule/getScheduleToday");
 const editScheduleData = require("./Query/Exam & Schedule/editScheduleData");
 const editSchedule = require("./Query/Exam & Schedule/editSchedule");
 const deleteSchedule = require("./Query/Exam & Schedule/deleteSchedule");
@@ -271,7 +272,19 @@ route.get("/view-schedule/:instructor/:today", async (req, res) => {
     });
   }
 });
-
+// get schedule base on today
+route.get("/today-schedule/:today", async (req, res) => {
+  try {
+    const today = req.params.today;
+    const resultScheduleToday = await getScheduleToday(today);
+    res.status(200).json(resultScheduleToday);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
 // Edit the data from schedule table
 route.put("/edit-schedule/:id", async (req, res) => {
   const scheduleId = req.params.id;
