@@ -12,7 +12,7 @@ const Reports = () => {
 
   useEffect(() => {
     // Fetch report data from the server
-    fetch("http://localhost:5000/api/report-data")
+    fetch(`http://localhost:5000/api/report-data/${user.instructor_id}`)
       .then((response) => response.json())
       .then((data) => setReportsData(data))
       .catch((error) => console.error(error));
@@ -49,8 +49,8 @@ const Reports = () => {
                   <tr>
                     <th>Report Name</th>
                     <th>Instructor Name</th>
-                    <th>Date</th>
-                    <th>Details</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
                     <th>Time Count</th>
                     <th>Date</th>
                   </tr>

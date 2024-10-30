@@ -34,7 +34,7 @@ const RoomStatus = () => {
 
   const handleClose = () => setShow(false);
 
-  // fetch the schedule in the database
+  // fetch the schedule in the database to show in view details schedule
   const fetchSchedule = () => {
     const dayTodayy = getDayOnly(new Date());
     fetch(`http://localhost:5000/api/today-schedule/${dayTodayy}`)

@@ -63,7 +63,9 @@ const TodaySchedule = () => {
 
           instructorSched.forEach((schedIns) => {
             const possible = new Set(); // Use a Set to avoid duplicates
+            const alreadyInrange = [];
             todaySched.forEach((sched) => {
+              // convert the schedule
               const endTime = convertTo24Hour(getEndTime(sched.time_sched));
               const instructorEndTime = convertTo24Hour(
                 getEndTime(schedIns.time_sched)
@@ -72,14 +74,20 @@ const TodaySchedule = () => {
               const instructorStartTime = convertTo24Hour(
                 getStartTime(schedIns.time_sched)
               );
+              // check if the room is in the range of that schedule
               const checkIfPossible =
                 parseInt(instructorEndTime.substring(0, 2)) <
                   parseInt(startTime.substring(0, 2)) ||
                 parseInt(instructorStartTime.substring(0, 2)) >
                   parseInt(endTime.substring(0, 2));
+              // condition to check if the room is possible and then adds
               if (checkIfPossible) {
-                possible.add(sched.room); // Add room to the Set
+                // check if the room is already in the array or in the range of schedule
+                if (!alreadyInrange.includes(sched.room)) {
+                  possible.add(sched.room); // Add room to the Set
+                }
               } else {
+                alreadyInrange.push(sched.room);
                 possible.delete(sched.room);
               }
             });

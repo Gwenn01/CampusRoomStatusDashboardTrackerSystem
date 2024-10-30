@@ -16,6 +16,7 @@ const scheduleData = require("./Query/Exam & Schedule/scheduleData");
 const getSheduleDataByInstructor = require("./Query/Exam & Schedule/getScheduleByInstructor");
 const getScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getScheduleDataByCourseYearSection");
 const getExamScheduleDataByCourseYearSection = require("./Query/Exam & Schedule/getExamScheduleDataByCourseYearSection");
+const getScheduleDataByCourseYearSectionToday = require("./Query/Exam & Schedule/getScheduleDataByCourseYearSectionToday");
 const getScheduleTodayInstructor = require("./Query/Exam & Schedule/getScheduleTodayInstructor");
 const getScheduleToday = require("./Query/Exam & Schedule/getScheduleToday");
 const editScheduleData = require("./Query/Exam & Schedule/editScheduleData");
@@ -31,6 +32,7 @@ const createInstructorAcc = require("./Query/Users/createInstructorAcc");
 const roomData = require("./Query/Room/roomData");
 const updateRoomStatus = require("./Query/Room/updateRoomStatus");
 const reportData = require("./Query/Reports/reportsData");
+const reportDataByInstructor = require("./Query/Reports/reportDataByInstructor");
 const insertReports = require("./Query/Reports/insertReports");
 
 // api testing
@@ -222,25 +224,6 @@ route.get("/view-schedule/:instructor", async (req, res) => {
     });
   }
 });
-// get data from schedule table by course year and section
-route.get("/view-schedule/:course/:year/:section", async (req, res) => {
-  try {
-    const course = req.params.course;
-    const year = req.params.year;
-    const section = req.params.section;
-    const resultExamSchedule = await getScheduleDataByCourseYearSection(
-      course,
-      year,
-      section
-    );
-    res.status(200).json(resultExamSchedule);
-  } catch (error) {
-    res.status(500).json({
-      error: "An error occurred while fetching data",
-      details: error.message,
-    });
-  }
-});
 // Data to be edited
 route.get("/view-schedulee/:id", async (req, res) => {
   try {
@@ -255,6 +238,7 @@ route.get("/view-schedulee/:id", async (req, res) => {
     });
   }
 });
+
 // get schedule base on today and instructor
 route.get("/view-schedule/:instructor/:today", async (req, res) => {
   try {
@@ -278,6 +262,46 @@ route.get("/today-schedule/:today", async (req, res) => {
     const today = req.params.today;
     const resultScheduleToday = await getScheduleToday(today);
     res.status(200).json(resultScheduleToday);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+// get data from schedule table by course year and section
+route.get("/view-schedulee/:course/:year/:section/:today", async (req, res) => {
+  try {
+    const course = req.params.course;
+    const year = req.params.year;
+    const section = req.params.section;
+    const today = req.params.today;
+    const resultSchedule = await getScheduleDataByCourseYearSectionToday(
+      course,
+      year,
+      section,
+      today
+    );
+    res.status(200).json(resultSchedule);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+// get the course year and section from the schedule table
+route.get("/view-schedule/:course/:year/:section", async (req, res) => {
+  try {
+    const course = req.params.course;
+    const year = req.params.year;
+    const section = req.params.section;
+    const resultSchedule = await getScheduleDataByCourseYearSection(
+      course,
+      year,
+      section
+    );
+    res.status(200).json(resultSchedule);
   } catch (error) {
     res.status(500).json({
       error: "An error occurred while fetching data",
@@ -466,6 +490,18 @@ route.put("/update-room-status", async (req, res) => {
 route.get("/report-data", async (req, res) => {
   try {
     const resultReportsData = await reportData();
+    res.status(200).json(resultReportsData);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while getting reports data",
+      details: error.message,
+    });
+  }
+});
+route.get("/report-data/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const resultReportsData = await reportDataByInstructor(id);
     res.status(200).json(resultReportsData);
   } catch (error) {
     res.status(500).json({
