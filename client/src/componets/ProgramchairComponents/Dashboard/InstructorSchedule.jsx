@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Table, Container, Row, Col, Card } from "react-bootstrap";
+import { Table, Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import "../../../styles/dashboard.css";
 
@@ -104,7 +105,19 @@ const InstructorSchedule = () => {
     selectedInstructor === "Select Instructor"
       ? groupInstructor // show all if none is selected
       : { [selectedInstructor]: groupInstructor[selectedInstructor] }; // filter based on selection
-
+  // handle the delete button
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this schedule?")) {
+      fetch(`http://localhost:5000/api/delete-schedule/${id}`, {
+        method: "DELETE",
+      })
+        .then(() => {
+          fetchData();
+          toast.success("Schedule deleted successfully.");
+        })
+        .catch((error) => console.error(error));
+    }
+  };
   return (
     <Container
       fluid
@@ -157,6 +170,7 @@ const InstructorSchedule = () => {
                       <th>Day</th>
                       <th>Year</th>
                       <th>Section</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -169,6 +183,30 @@ const InstructorSchedule = () => {
                           <td>{item.day_sched}</td>
                           <td>{item.srud_year}</td>
                           <td>{item.section}</td>
+                          <td className="text-center">
+                            <Link to={`edit-schedule/${item.id}`}>
+                              <Button
+                                variant="warning"
+                                style={{
+                                  fontSize: "0.5rem",
+                                  width: "3.5rem",
+                                  marginRight: "5px",
+                                }}
+                              >
+                                Edit
+                              </Button>
+                            </Link>
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDelete(item.id)}
+                              style={{
+                                fontSize: "0.5rem",
+                                width: "3.5rem",
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </td>
                         </tr>
                       ))}
                   </tbody>

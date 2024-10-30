@@ -74,6 +74,14 @@ const Dashboard = () => {
               path="view-schedule/edit-schedule/:id"
               element={<EditSchedule />}
             />
+            <Route
+              path="instructor-schedule/edit-schedule/:id"
+              element={<EditSchedule />}
+            />
+            <Route
+              path="room-schedule/edit-schedule/:id"
+              element={<EditSchedule />}
+            />
             <Route path="edit-schedule/:id" element={<EditSchedule />} />
             <Route path="view-exam-schedule" element={<ExamSchedule />} />
             <Route

@@ -24,6 +24,10 @@ const RoomStatus = () => {
 
   const handleClose = () => setShow(false);
 
+  // today date
+  const getDayOnly = (date) => {
+    return date.toLocaleDateString("en-US", { weekday: "long" });
+  };
   // Fetch room data
   const fetchRooms = () => {
     fetch("http://localhost:5000/api/get-rooms")
@@ -36,12 +40,16 @@ const RoomStatus = () => {
     fetchRooms();
   }, []);
 
-  // Fetch schedule data
-  useEffect(() => {
-    fetch("http://localhost:5000/api/view-schedule")
+  // fetch the schedule in the database
+  const fetchSchedule = () => {
+    const dayTodayy = getDayOnly(new Date());
+    fetch(`http://localhost:5000/api/today-schedule/${dayTodayy}`)
       .then((response) => response.json())
       .then((data) => setSchedule(data))
       .catch((error) => console.error(error));
+  };
+  useEffect(() => {
+    fetchSchedule();
   }, []);
 
   // Function to get the current day as a string
@@ -106,6 +114,29 @@ const RoomStatus = () => {
     setSelectedRoomSchedule(roomSchedule); // Store the schedule for the selected room
     setSelectedRoomName(roomName); // Store the room name
     setShow(true);
+  };
+  // functions to sort the schedule by date and time
+  const convertTo24HourFormat = (time) => {
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+  const compareTime = (timeA, timeB) => {
+    const a = convertTo24HourFormat(timeA);
+    const b = convertTo24HourFormat(timeB);
+
+    if (a.hours !== b.hours) {
+      return a.hours - b.hours;
+    } else {
+      return a.minutes - b.minutes;
+    }
   };
 
   return (
@@ -183,17 +214,19 @@ const RoomStatus = () => {
                 </tr>
               </thead>
               <tbody>
-                {selectedRoomSchedule.map((scheduleItem, index) => (
-                  <tr key={index}>
-                    <td>
-                      {scheduleItem.time_sched} {scheduleItem.instructor}
-                    </td>
-                    <td>{scheduleItem.subject_description}</td>
-                    <td>
-                      {scheduleItem.stud_year} {scheduleItem.section}
-                    </td>
-                  </tr>
-                ))}
+                {selectedRoomSchedule
+                  .sort((a, b) => compareTime(a.time_sched, b.time_sched))
+                  .map((scheduleItem, index) => (
+                    <tr key={index}>
+                      <td>
+                        {scheduleItem.time_sched} {scheduleItem.instructor}
+                      </td>
+                      <td>{scheduleItem.subject_description}</td>
+                      <td>
+                        {scheduleItem.stud_year} {scheduleItem.section}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </Table>
           ) : (

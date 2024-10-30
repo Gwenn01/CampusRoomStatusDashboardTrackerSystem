@@ -35,53 +35,55 @@ const RoomStatus = () => {
   const handleClose = () => setShow(false);
 
   // fetch the schedule in the database
-  useEffect(() => {
-    fetch("http://localhost:5000/api/view-schedule")
+  const fetchSchedule = () => {
+    const dayTodayy = getDayOnly(new Date());
+    fetch(`http://localhost:5000/api/today-schedule/${dayTodayy}`)
       .then((response) => response.json())
       .then((data) => setSchedule(data))
       .catch((error) => console.error(error));
+  };
+  useEffect(() => {
+    fetchSchedule();
   }, []);
   // fetch the schedule from the database base on the specific data
   useEffect(() => {
-    const fetchRoomsAndSchedule = async () => {
-      try {
-        // date today
-        const today = new Date();
-        const dayToday = formatDay(today); // Get the current day
-        // responese getting the data
-        const roomsResponse = await fetch(
-          "http://localhost:5000/api/get-rooms"
-        );
-        const roomsData = await roomsResponse.json();
-
-        const scheduleResponse = await fetch(
-          `http://localhost:5000/api/view-schedule/${user.instructor_id}/${dayToday}`
-        );
-        const scheduleData = await scheduleResponse.json();
-
-        // Map and merge the data to update rooms with schedule info
-        const updatedRooms = roomsData.map((room) => {
-          const roomSchedule = scheduleData.find(
-            (schedule) => schedule.room === room.roomName
-          );
-
-          return {
-            ...room,
-            instructorScheduleAt: roomSchedule
-              ? `Schedule At: ${roomSchedule.time_sched}`
-              : "No Schedule for this room ",
-          };
-        });
-
-        setRooms(updatedRooms);
-      } catch (error) {
-        console.error("Error fetching rooms or schedule", error);
-        toast.error("Failed to load rooms and schedule data");
-      }
-    };
-
     fetchRoomsAndSchedule();
   }, [user.instructor_id]);
+  const fetchRoomsAndSchedule = async () => {
+    try {
+      // date today
+      const today = new Date();
+      const dayToday = formatDay(today); // Get the current day
+      // responese getting the data
+      const roomsResponse = await fetch("http://localhost:5000/api/get-rooms");
+      const roomsData = await roomsResponse.json();
+
+      const scheduleResponse = await fetch(
+        `http://localhost:5000/api/view-schedule/${user.instructor_id}/${dayToday}`
+      );
+      const scheduleData = await scheduleResponse.json();
+
+      // Map and merge the data to update rooms with schedule info
+      const updatedRooms = roomsData.map((room) => {
+        const roomSchedule = scheduleData.find(
+          (schedule) => schedule.room === room.roomName
+        );
+
+        return {
+          ...room,
+          instructorScheduleAt: roomSchedule
+            ? `Schedule At: ${roomSchedule.time_sched}`
+            : "No Schedule for this room ",
+        };
+      });
+
+      setRooms(updatedRooms);
+    } catch (error) {
+      console.error("Error fetching rooms or schedule", error);
+      toast.error("Failed to load rooms and schedule data");
+    }
+  };
+
   //function to get the date
   const formatDay = (date) => {
     const options = {
@@ -129,8 +131,8 @@ const RoomStatus = () => {
         return response.json();
       })
       .then(() => {
+        fetchRoomsAndSchedule();
         toast.success("Room status updated successfully");
-        fetchRooms();
       })
       .catch((error) => {
         toast.error("Failed to update room status");
@@ -173,7 +175,6 @@ const RoomStatus = () => {
       })
       .then(() => {
         toast.success("Insert report data successfully");
-        fetchRooms();
       })
       .catch((error) => {
         toast.error("Failed to insert report data");
@@ -201,11 +202,11 @@ const RoomStatus = () => {
         return response.json();
       })
       .then(() => {
+        fetchRoomsAndSchedule();
         toast.success("Room status updated successfully");
-        fetchRooms();
       })
       .catch((error) => {
-        toast.error("Failed to update room status");
+        toast.error("Failed to update room status", error);
       });
   };
 

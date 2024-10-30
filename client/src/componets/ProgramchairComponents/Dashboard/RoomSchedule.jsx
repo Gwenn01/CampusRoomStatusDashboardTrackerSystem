@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Table, Container, Row, Col, Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { Table, Container, Row, Col, Card, Button } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown";
 import "../../../styles/dashboard.css";
 
@@ -121,6 +122,19 @@ const RoomSchedule = () => {
   const sortedRooms = Object.keys(filteredSchedulesForRoom).sort(
     customRoomSort
   );
+  // handle the delete button
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this schedule?")) {
+      fetch(`http://localhost:5000/api/delete-schedule/${id}`, {
+        method: "DELETE",
+      })
+        .then(() => {
+          fetchData();
+          toast.success("Schedule deleted successfully.");
+        })
+        .catch((error) => console.error(error));
+    }
+  };
 
   return (
     <Container fluid style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
@@ -168,6 +182,7 @@ const RoomSchedule = () => {
                       <th>Section</th>
                       <th>Time</th>
                       <th>Day</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -179,6 +194,30 @@ const RoomSchedule = () => {
                         <td>{item.section}</td>
                         <td>{item.time_sched}</td>
                         <td>{item.day_sched}</td>
+                        <td className="text-center">
+                          <Link to={`edit-schedule/${item.id}`}>
+                            <Button
+                              variant="warning"
+                              style={{
+                                fontSize: "0.5rem",
+                                width: "3.5rem",
+                                marginRight: "5px",
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </Link>
+                          <Button
+                            variant="danger"
+                            onClick={() => handleDelete(item.id)}
+                            style={{
+                              fontSize: "0.5rem",
+                              width: "3.5rem",
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

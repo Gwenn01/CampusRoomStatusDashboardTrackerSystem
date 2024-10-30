@@ -68,16 +68,23 @@ const TodaySchedule = () => {
               const instructorEndTime = convertTo24Hour(
                 getEndTime(schedIns.time_sched)
               );
-
-              if (
-                parseInt(endTime.substring(0, 2)) >=
-                parseInt(instructorEndTime.substring(0, 2))
-              ) {
+              const startTime = convertTo24Hour(getStartTime(sched.time_sched));
+              const instructorStartTime = convertTo24Hour(
+                getStartTime(schedIns.time_sched)
+              );
+              const checkIfPossible =
+                parseInt(instructorEndTime.substring(0, 2)) <
+                  parseInt(startTime.substring(0, 2)) ||
+                parseInt(instructorStartTime.substring(0, 2)) >
+                  parseInt(endTime.substring(0, 2));
+              if (checkIfPossible) {
                 possible.add(sched.room); // Add room to the Set
+              } else {
+                possible.delete(sched.room);
               }
             });
             // Create a key using both subject description and section
-            const key = `${schedIns.subject_description}-${schedIns.section}`;
+            const key = `${schedIns.subject_description}-${schedIns.section}-${schedIns.time_sched}`;
             possibleRooms[key] = Array.from(possible);
           });
           setPosibleRoom(possibleRooms); // Set the state with the possible rooms
@@ -92,7 +99,13 @@ const TodaySchedule = () => {
     }
   }, [user?.instructor_id, dayToday]);
 
-  //
+  // function to filter the posible rooms
+  function getStartTime(schedule) {
+    // Split the string by the '-' character and trim spaces
+    const parts = schedule.split("-");
+    // Return the second part after trimming whitespace
+    return parts[0].trim();
+  }
   function getEndTime(schedule) {
     // Split the string by the '-' character and trim spaces
     const parts = schedule.split("-");
@@ -210,7 +223,7 @@ const TodaySchedule = () => {
                 .sort((a, b) => compareTime(a.time_sched, b.time_sched))
                 .map((item, index) => {
                   // Create the key using subject_description and section
-                  const key = `${item.subject_description}-${item.section}`;
+                  const key = `${item.subject_description}-${item.section}-${item.time_sched}`;
                   return (
                     <tr key={index}>
                       <td>{item.course}</td>
