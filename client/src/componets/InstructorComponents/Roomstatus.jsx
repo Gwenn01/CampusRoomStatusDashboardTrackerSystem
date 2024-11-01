@@ -96,8 +96,15 @@ const RoomStatus = () => {
     const dayString = formatDay(today);
     setSelectedDay(dayString);
   }, [schedule]);
+
+  // HANDLE THE CHECK IN AND OUT BUTTON
   // handle the status button
   const handleStatusButtonIn = (room_id, status) => {
+    // Check if the room is already occupied; if so, display an error and stop further processing
+    if (checkStatus(room_id, "occupied")) return; // Terminate if the room is vacan
+    // check if you already in the room
+    if (checkDuplicatedIn()) return;
+
     // get the value if the instructor click in and out
     let instructorName = "";
     if (user.instructor_name) {
@@ -105,7 +112,6 @@ const RoomStatus = () => {
     } else if (user.programchair_name) {
       instructorName = user.programchair_name;
     }
-
     let timeIn = new Date().toLocaleTimeString();
     // updating in the databse when room is occupied or not
     fetch(`http://localhost:5000/api/update-room-status`, {
@@ -138,15 +144,11 @@ const RoomStatus = () => {
     timeIn
   ) => {
     // Check if the room is vacant; if so, display an error and stop further processing
-    const isRoomVacant = rooms.some((room) => {
-      if (room.id == room_id && room.roomStatus == "vacant") {
-        toast.error("You can only check out if the room is occupied.");
-        return true; // This stops the function execution
-      }
-      return false;
-    });
-    if (isRoomVacant) return; // Terminate if the room is vacan
+    if (checkStatus(room_id, "vacant")) return; // Terminate if the room is vacant
+    // check out you can only access the room if you are the one who out
+    if (checkOutAccount(room_id)) return;
 
+    // data tibe insert in the reports
     const room_name = roomName;
     const instructor_name = instructorName;
     const time_in = timeIn;
@@ -208,7 +210,44 @@ const RoomStatus = () => {
         toast.error("Failed to update room status", error);
       });
   };
+  // HANDLE FUNCTION FOR INSTRUCTOR TO CHECK IN AND OUT
+  // function to handle the out if is vacant or double in
+  const checkStatus = (room_id, status) => {
+    return rooms.some((room) => {
+      if (room.id === room_id && room.roomStatus === status) {
+        if (status === "vacant") {
+          toast.error("You can only check out if the room is occupied.");
+        } else {
+          toast.error("This room is already occupied.");
+        }
+        return true; // Indicates that the status condition matched
+      }
+      return false;
+    });
+  };
+  const checkDuplicatedIn = () => {
+    return rooms.some((room) => {
+      if (room.instructorName === user.instructor_name) {
+        toast.info("You can only check into one room.");
+        return true; // Stop as soon as a match is found
+      }
+      return false;
+    });
+  };
+  // check in per account you can only access the room if you are the one who in
+  const checkOutAccount = (room_id) => {
+    return rooms.some((room) => {
+      if (room.id == room_id && room.instructorName != user.instructor_name) {
+        toast.error(
+          "You can't check out of this room because another instructor has already occupied it."
+        );
+        return true; // Indicates that the status condition matched
+      }
+      return false;
+    });
+  };
 
+  // HANDLE TIME
   // Hnadle the timeee format date
   useEffect(() => {
     const timer = setInterval(() => {
@@ -238,6 +277,7 @@ const RoomStatus = () => {
     };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
+  // HANDLE THE DETAILS SCHEDULE
   // get the day today
   const handleShowDetails = (roomName) => {
     const roomSchedule = schedule.filter((item) => item.room === roomName);
