@@ -13,7 +13,6 @@ const RoomStatus = () => {
   // States
   const [currentTime, setCurrentTime] = useState(new Date());
   const [schedule, setSchedule] = useState([]); // Full schedule data
-  const [filteredSchedule, setFilteredSchedule] = useState([]); // Filtered data
   const [rooms, setRooms] = useState([]);
 
   // Modal states
@@ -63,16 +62,9 @@ const RoomStatus = () => {
 
   // Filter the schedule for the current day
   useEffect(() => {
-    if (schedule.length > 0) {
-      const today = new Date();
-      const dayString = formatDay(today); // Get the current day
-      setSelectedDay(dayString); // Set the selected day to current day
-
-      const filterSchedule = schedule.filter(
-        (item) => item.day_sched === dayString
-      );
-      setFilteredSchedule(filterSchedule); // Update only the filtered schedule
-    }
+    const today = new Date();
+    const dayString = formatDay(today); // Get the current day
+    setSelectedDay(dayString); // Set the selected day to current day
   }, [schedule]); // Runs only when schedule changes
 
   // Handle current time and date
@@ -107,9 +99,7 @@ const RoomStatus = () => {
 
   // Handle "View Details" click
   const handleShowDetails = (roomName) => {
-    const roomSchedule = filteredSchedule.filter(
-      (item) => item.room === roomName
-    );
+    const roomSchedule = schedule.filter((item) => item.room === roomName);
 
     setSelectedRoomSchedule(roomSchedule); // Store the schedule for the selected room
     setSelectedRoomName(roomName); // Store the room name

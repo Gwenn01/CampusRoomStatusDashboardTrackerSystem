@@ -23,9 +23,7 @@ const RoomStatus = () => {
   // variables for roomstatus
   const [currentTime, setCurrentTime] = useState(new Date());
   const [schedule, setSchedule] = useState([]);
-  const [filteredSchedule, setFilteredSchedule] = useState([]);
   const [rooms, setRooms] = useState([]);
-  const [scheduleToday, setScheduleToday] = useState([]);
   // variables for view schedule details of room
   const [show, setShow] = useState(false);
   const [selectedRoomSchedule, setSelectedRoomSchedule] = useState([]);
@@ -94,16 +92,9 @@ const RoomStatus = () => {
   };
   // filtered the schedule base on the day
   useEffect(() => {
-    if (schedule.length > 0) {
-      const today = new Date();
-      const dayString = formatDay(today);
-      setSelectedDay(dayString);
-
-      const filterSchedule = schedule.filter(
-        (item) => item.day_sched === dayString
-      );
-      setFilteredSchedule(filterSchedule);
-    }
+    const today = new Date();
+    const dayString = formatDay(today);
+    setSelectedDay(dayString);
   }, [schedule]);
   // handle the status button
   const handleStatusButtonIn = (room_id, status) => {
@@ -146,6 +137,16 @@ const RoomStatus = () => {
     instructorName,
     timeIn
   ) => {
+    // Check if the room is vacant; if so, display an error and stop further processing
+    const isRoomVacant = rooms.some((room) => {
+      if (room.id == room_id && room.roomStatus == "vacant") {
+        toast.error("You can only check out if the room is occupied.");
+        return true; // This stops the function execution
+      }
+      return false;
+    });
+    if (isRoomVacant) return; // Terminate if the room is vacan
+
     const room_name = roomName;
     const instructor_name = instructorName;
     const time_in = timeIn;
@@ -180,8 +181,6 @@ const RoomStatus = () => {
         toast.error("Failed to insert report data");
       });
 
-    const updatedInstructorName = ""; // reset the value in room status after click the button out
-    const updatedTimeIn = ""; // reset the value in room status after click the button out
     // update the room tabale if the room status is out
     fetch(`http://localhost:5000/api/update-room-status`, {
       method: "PUT",
@@ -191,8 +190,8 @@ const RoomStatus = () => {
       body: JSON.stringify({
         room_id,
         status,
-        instructorName: updatedInstructorName,
-        timeIn: updatedTimeIn,
+        instructorName: "",
+        timeIn: "",
       }),
     })
       .then((response) => {
@@ -241,9 +240,7 @@ const RoomStatus = () => {
   };
   // get the day today
   const handleShowDetails = (roomName) => {
-    const roomSchedule = filteredSchedule.filter(
-      (item) => item.room === roomName
-    );
+    const roomSchedule = schedule.filter((item) => item.room === roomName);
     // set the values
     setSelectedRoomSchedule(roomSchedule);
     setSelectedRoomName(roomName);

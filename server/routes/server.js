@@ -5,6 +5,7 @@ const allCourseData = require("./Query/Course/allCourse");
 const courseData = require("./Query/Course/getCourse");
 const instructorData = require("./Query/Users/instructorData");
 const editInstructor = require("./Query/Users/editInstructor");
+const editProgramchair = require("./Query/Users/editProgramchair");
 const deleteInstructor = require("./Query/Users/deleteInstructor");
 const programchairData = require("./Query/Users/programchairData");
 const curriculumData = require("./Query/Curriculum/curriculumData");
@@ -63,7 +64,6 @@ route.get("/course/:id", async (req, res) => {
     });
   }
 });
-
 // LOGIN API
 route.get("/login", async (req, res) => {
   try {
@@ -81,6 +81,76 @@ route.get("/login", async (req, res) => {
     });
   }
 });
+// USER API
+route.get("/user/:id", async (req, res) => {
+  try {
+    const user_id = req.params.id;
+    const instructor = await instructorData();
+    const programchair = await programchairData();
+
+    // Check instructor data
+    for (const item of instructor.instructor) {
+      if (item.instructor_id == user_id) {
+        const data = {
+          user_id: item.instructor_id,
+          name: item.instructor_name,
+          username: item.instructor_username,
+          password: item.instructor_password,
+        };
+        return res.status(200).json(data); // Send response and exit
+      }
+    }
+
+    // Check program chair data
+    for (const item of programchair.programchair) {
+      if (item.programchair_id == user_id) {
+        const data = {
+          user_id: item.programchair_id,
+          name: item.programchair_name,
+          username: item.programchair_username,
+          password: item.programchair_password,
+        };
+        return res.status(200).json(data); // Send response and exit
+      }
+    }
+
+    // If no match, send an empty response
+    res.status(404).json({ message: "User not found" });
+  } catch (err) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: err.message,
+    });
+  }
+});
+// update the user
+route.put("/update-instructor/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const toBeEditValue = req.body;
+    const resultInstructor = await editInstructor(id, toBeEditValue);
+    res.status(200).json(resultInstructor);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+route.put("/update-programchair/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const toBeEditValue = req.body;
+    const resultProgramchair = await editProgramchair(id, toBeEditValue);
+    res.status(200).json(resultProgramchair);
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: error.message,
+    });
+  }
+});
+
 // CURRICULUM API
 route.get("/curriculum/:id", async (req, res) => {
   try {
