@@ -23,6 +23,7 @@ const RoomStatus = () => {
   // variables for roomstatus
   const [currentTime, setCurrentTime] = useState(new Date());
   const [schedule, setSchedule] = useState([]);
+  const [todaySchedule, setTodaySchedule] = useState([]);
   const [rooms, setRooms] = useState([]);
   // variables for view schedule details of room
   const [show, setShow] = useState(false);
@@ -55,12 +56,12 @@ const RoomStatus = () => {
       // responese getting the data
       const roomsResponse = await fetch("http://localhost:5000/api/get-rooms");
       const roomsData = await roomsResponse.json();
-
+      // instructor today schedule
       const scheduleResponse = await fetch(
         `http://localhost:5000/api/view-schedule/${user.instructor_id}/${dayToday}`
       );
       const scheduleData = await scheduleResponse.json();
-
+      setTodaySchedule(scheduleData);
       // Map and merge the data to update rooms with schedule info
       const updatedRooms = roomsData.map((room) => {
         const roomSchedule = scheduleData.find(
@@ -99,11 +100,14 @@ const RoomStatus = () => {
 
   // HANDLE THE CHECK IN AND OUT BUTTON
   // handle the status button
-  const handleStatusButtonIn = (room_id, status) => {
+  const handleStatusButtonIn = (room_id, status, room_name) => {
     // Check if the room is already occupied; if so, display an error and stop further processing
     if (checkStatus(room_id, "occupied")) return; // Terminate if the room is vacan
     // check if you already in the room
     if (checkDuplicatedIn()) return;
+    // check designated
+    console.log(checkDesignatedRoom(room_name));
+    if (checkDesignatedRoom(room_name)) status = "occupied";
 
     // get the value if the instructor click in and out
     let instructorName = "";
@@ -147,7 +151,6 @@ const RoomStatus = () => {
     if (checkStatus(room_id, "vacant")) return; // Terminate if the room is vacant
     // check out you can only access the room if you are the one who out
     if (checkOutAccount(room_id)) return;
-
     // data tibe insert in the reports
     const room_name = roomName;
     const instructor_name = instructorName;
@@ -246,7 +249,53 @@ const RoomStatus = () => {
       return false;
     });
   };
+  // check the instructor check in if the room is designated to that instructor
+  const checkDesignatedRoom = (room_name) => {
+    // get the current date
+    const date = new Date();
+    const currentTime = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    const current24Hour = convertTo24Hour(currentTime);
 
+    return todaySchedule.some((schedule) => {
+      const timeSched = schedule.time_sched;
+      const [startTime, endTime] = timeSched.split(" - ");
+      // Convert all times to 24-hour format for easier comparison
+      const start24Hour = convertTo24Hour(startTime);
+      const end24Hour = convertTo24Hour(endTime);
+
+      if (
+        schedule.room == room_name &&
+        current24Hour >= start24Hour &&
+        current24Hour <= end24Hour
+      ) {
+        return true;
+      }
+      return false;
+    });
+  };
+  // function to convet the time into 24hours format
+  function convertTo24Hour(time12h) {
+    const [time, modifier] = time12h.split(" "); // Split the time and AM/PM part
+    let [hours, minutes] = time.split(":"); // Split hours and minutes
+
+    // Convert hours to a 24-hour format
+    if (modifier === "PM" && hours !== "12") {
+      hours = parseInt(hours, 10) + 12;
+    }
+    if (modifier === "AM" && hours === "12") {
+      hours = "00";
+    }
+
+    // Pad hours and minutes with leading zero if necessary
+    hours = hours.toString().padStart(2, "0");
+    minutes = minutes.padStart(2, "0");
+
+    return `${hours}:${minutes}`;
+  }
   // HANDLE TIME
   // Hnadle the timeee format date
   useEffect(() => {
@@ -330,7 +379,13 @@ const RoomStatus = () => {
               className="room-card"
               style={{
                 backgroundColor:
-                  room.roomStatus === "vacant" ? "lightgreen" : "lightcoral",
+                  room.roomStatus === "vacant"
+                    ? "lightgreen"
+                    : room.roomStatus === "occupied"
+                    ? "lightcoral"
+                    : room.roomStatus === "misallocated"
+                    ? "#E26640"
+                    : "white",
               }}
             >
               <Card.Body>
@@ -340,6 +395,21 @@ const RoomStatus = () => {
                 </span>
                 <br />
                 <span>{room.roomStatus}</span>
+                <br />
+                {room.roomStatus == "occupied" ? (
+                  <span style={{ fontSize: "0.5rem" }}>
+                    Occupied in designated room and time.
+                  </span>
+                ) : (
+                  ""
+                )}
+                {room.roomStatus == "misallocated" ? (
+                  <span style={{ fontSize: "0.5rem" }}>
+                    Occupied in an undesignated room and time.
+                  </span>
+                ) : (
+                  ""
+                )}
                 <Card.Text className="room-body ">
                   <img
                     src={
@@ -347,7 +417,8 @@ const RoomStatus = () => {
                     }
                     alt="room status"
                   />
-                  {room.roomStatus === "occupied" ? (
+                  {room.roomStatus === "occupied" ||
+                  room.roomStatus === "misallocated" ? (
                     <div
                       className="room-info d-flex justify-content-center align-items-center flex-column"
                       style={{ fontSize: "0.7rem" }}
@@ -363,7 +434,13 @@ const RoomStatus = () => {
                   <Button
                     variant="success"
                     className="action-btn"
-                    onClick={() => handleStatusButtonIn(room.id, "occupied")}
+                    onClick={() =>
+                      handleStatusButtonIn(
+                        room.id,
+                        "misallocated",
+                        room.roomName
+                      )
+                    }
                   >
                     In
                   </Button>
