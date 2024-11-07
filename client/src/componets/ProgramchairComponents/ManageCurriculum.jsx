@@ -12,6 +12,7 @@ import {
   Table,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
+import "../../styles/responsive/userpage.css";
 
 const ManageCurriculum = () => {
   // user data
@@ -191,21 +192,19 @@ const ManageCurriculum = () => {
   return (
     <Container
       fluid
-      className="p-4 accordion create-sched-container"
+      className="p-4 accordion manage-curriculum-container"
       style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}
     >
       <h1 className="text-center mb-4">
         {courseData.length > 0
-          ? `${courseData[0].course_name} Currriculum`
+          ? `${courseData[0].course_name} Curriculum`
           : "Loading..."}
       </h1>
+
+      {/* Input Fields */}
       <Row>
-        <Col>
-          <FloatingLabel
-            controlId="floatingInputCode"
-            label="Enter Code"
-            className="mb-3"
-          >
+        <Col md={6} xs={12} className="mb-3">
+          <FloatingLabel controlId="floatingInputCode" label="Enter Code">
             <Form.Control
               type="text"
               placeholder="Enter Code"
@@ -214,12 +213,8 @@ const ManageCurriculum = () => {
             />
           </FloatingLabel>
         </Col>
-        <Col>
-          <FloatingLabel
-            controlId="floatingInputName"
-            label="Enter Name"
-            className="mb-3"
-          >
+        <Col md={6} xs={12} className="mb-3">
+          <FloatingLabel controlId="floatingInputName" label="Enter Name">
             <Form.Control
               type="text"
               placeholder="Name"
@@ -229,13 +224,10 @@ const ManageCurriculum = () => {
           </FloatingLabel>
         </Col>
       </Row>
+
       <Row>
-        <Col>
-          <FloatingLabel
-            controlId="floatingInputUnits"
-            label="Enter Units"
-            className="mb-3"
-          >
+        <Col md={6} xs={12} className="mb-3">
+          <FloatingLabel controlId="floatingInputUnits" label="Enter Units">
             <Form.Control
               type="number"
               placeholder="Enter Units"
@@ -244,12 +236,8 @@ const ManageCurriculum = () => {
             />
           </FloatingLabel>
         </Col>
-        <Col>
-          <FloatingLabel
-            controlId="floatingInputYear"
-            label="Enter Year"
-            className="mb-3"
-          >
+        <Col md={6} xs={12} className="mb-3">
+          <FloatingLabel controlId="floatingInputYear" label="Enter Year">
             <Form.Control
               type="text"
               placeholder="Enter Year"
@@ -259,12 +247,12 @@ const ManageCurriculum = () => {
           </FloatingLabel>
         </Col>
       </Row>
+
       <Row>
-        <Col>
+        <Col md={6} xs={12} className="mb-3">
           <FloatingLabel
             controlId="floatingInputSemester"
             label="Enter Semester"
-            className="mb-3"
           >
             <Form.Control
               type="text"
@@ -275,13 +263,23 @@ const ManageCurriculum = () => {
           </FloatingLabel>
         </Col>
       </Row>
+
+      {/* Add Curriculum Button */}
       <Row className="p-2">
-        <Button variant="secondary" onClick={handleAddCurriculum}>
-          Add Curriculum
-        </Button>
+        <Col xs={12} className="d-flex justify-content-center">
+          <Button
+            variant="secondary"
+            onClick={handleAddCurriculum}
+            className="w-50"
+          >
+            Add Curriculum
+          </Button>
+        </Col>
       </Row>
+
+      {/* Dropdowns for Selecting Year and Semester */}
       <Row className="mb-3">
-        <Col md={6} className="mb-3">
+        <Col md={6} xs={12} className="mb-3">
           <h5>Select Year</h5>
           <Dropdown onSelect={(e) => handleYearChange(e)}>
             <Dropdown.Toggle
@@ -289,7 +287,7 @@ const ManageCurriculum = () => {
               variant="secondary"
               className="w-100"
             >
-              {selectedYear}
+              {selectedYear || "Select Year"}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item eventKey="1stYear">1st Year</Dropdown.Item>
@@ -299,7 +297,7 @@ const ManageCurriculum = () => {
             </Dropdown.Menu>
           </Dropdown>
         </Col>
-        <Col md={6} className="mb-3">
+        <Col md={6} xs={12} className="mb-3">
           <h5>Select Semester</h5>
           <Dropdown onSelect={(e) => handleSemesterChange(e)}>
             <Dropdown.Toggle
@@ -307,7 +305,7 @@ const ManageCurriculum = () => {
               variant="secondary"
               className="w-100"
             >
-              {selectedSemester}
+              {selectedSemester || "Select Semester"}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item eventKey="1stSemester">1st Semester</Dropdown.Item>
@@ -319,8 +317,16 @@ const ManageCurriculum = () => {
           </Dropdown>
         </Col>
       </Row>
+
+      {/* Curriculum Table */}
       <Row className="p-2">
-        <Table striped bordered hover>
+        <Table
+          striped
+          bordered
+          hover
+          responsive="sm"
+          className="manage-curriculum-table"
+        >
           <thead>
             <tr>
               <th>Code</th>
@@ -339,17 +345,17 @@ const ManageCurriculum = () => {
                 <td>{curriculum.units}</td>
                 <td>{curriculum.year}</td>
                 <td>{curriculum.semester}</td>
-                <td className="d-flex justify-content-around">
+                <td className="d-flex flex-column flex-sm-row justify-content-around">
                   <Button
                     variant="primary"
-                    className="h-100 w-100"
+                    className="mb-2 mb-sm-0 w-100"
                     onClick={() => handleEdit(curriculum)}
                   >
                     Edit
                   </Button>
                   <Button
                     variant="danger"
-                    className="h-100 w-100"
+                    className="w-100"
                     onClick={() => handleDeleteSubmit(curriculum.id)}
                   >
                     Delete

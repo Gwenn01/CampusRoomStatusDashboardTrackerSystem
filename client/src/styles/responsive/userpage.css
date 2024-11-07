@@ -7,11 +7,14 @@
 @media (max-width: 850px) {
   .container-pg {
     display: grid;
+    width: 100% !important;
     grid-template-columns: 1fr !important;
   }
 
   .content-pg {
+    width: 100% !important;
     grid-column: 1/2 !important;
+    position: relative !important;
   }
   .sidebar {
     position: fixed;
@@ -50,5 +53,11 @@
   .container-pg .sidebar .container-sidebarbtns {
     margin-top: 1.8rem;
   }
-  /*Dashboard content*/
+  /*manage curriculum*/
+  .manage-curriculum-container {
+    width: 100% !important;
+  }
+  .manage-curriculum-table {
+    font-size: 0.7rem !important;
+  }
 }
