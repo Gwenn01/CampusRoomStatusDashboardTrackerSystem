@@ -125,22 +125,3 @@
   background-color: #efefef;
   color: black;
 }
-
-/* Responsive adjustments for tablets */
-@media (min-width: 768px) {
-  .content-login {
-    width: 400px;
-  }
-}
-
-/* Responsive adjustments for mobile */
-@media (max-width: 400px) {
-  .content-login {
-    width: 100%;
-    padding: 1rem;
-  }
-
-  .login h1 {
-    font-size: 1.2rem;
-  }
-}

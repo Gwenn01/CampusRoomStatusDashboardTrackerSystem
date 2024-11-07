@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, Link, Route, Routes } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import "../styles/instructor.css";
@@ -10,17 +10,35 @@ import RoomStatus from "../componets/InstructorComponents/Roomstatus";
 import dashboard from "../assets/dashboard.png";
 import todaySched from "../assets/today-schedule.png";
 import roomStatus from "../assets/roomstatus.png";
+import "../styles/responsive/userpage.css";
 
 const InstructorPage = () => {
   const location = useLocation();
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
   return (
     <>
       <Header />
+      <button
+        className="toggle-sidebar"
+        onClick={toggleSidebar}
+        style={{
+          display: "fixed",
+          top: "10%",
+          left: "0",
+          fontSize: "1rem",
+          padding: "0 0.5rem 0 0.5rem",
+          border: "1px solid #ccc",
+          borderRadius: "10px",
+        }}
+      >
+        ☰
+      </button>
       <div className="container-pg">
-        <div className="sidebar">
+        <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
           <div className="container-sidebarbtns">
             <Link to="dashboard">
               <Button variant="secondary" className="btn-sidebar">

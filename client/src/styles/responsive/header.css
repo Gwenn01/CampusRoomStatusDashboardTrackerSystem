@@ -1,0 +1,44 @@
+@media (max-width: 850px) {
+  .responsive-header {
+    height: 10%;
+  }
+  .responsive-header .header-text {
+    font-size: 0.6rem;
+  }
+  .right-content .responsive-userdetails {
+    display: none;
+  }
+  .user-info-res {
+    display: block;
+  }
+}
+@media (max-width: 600px) {
+  .responsive-header .header-text {
+    font-size: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-brand {
+    display: flex;
+    flex-direction: roq;
+  }
+  .responsive-header .header-text {
+    display: none;
+  }
+  .responsive-header .header-text-responsive {
+    display: block;
+    font-size: 0.4rem;
+    margin-left: 0.2rem;
+  }
+  .right-content .logout-btn {
+    width: 2rem;
+  }
+  .responsive-modal {
+    font-size: 0.8rem;
+  }
+  .responsive-modal .responsive-modal-header {
+    display: flex;
+    flex-direction: column;
+  }
+}

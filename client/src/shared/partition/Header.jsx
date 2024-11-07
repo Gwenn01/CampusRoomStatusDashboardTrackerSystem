@@ -11,6 +11,7 @@ import { Button, Form, FloatingLabel } from "react-bootstrap";
 import { toast } from "react-toastify";
 import Spinner from "../../componets/Spinner";
 import { useNavigate } from "react-router-dom";
+import "../../styles/responsive/header.css";
 
 const Header = () => {
   // for modal
@@ -45,6 +46,8 @@ const Header = () => {
           response = await fetch(
             `http://localhost:5000/api/user/${user.instructor_id}`
           );
+        } else {
+          return;
         }
 
         if (response && response.ok) {
@@ -54,10 +57,10 @@ const Header = () => {
           setSelectedUsername(data.username);
           setSelectedPassword(data.password);
         } else {
-          console.error("Failed to fetch user data:", response.statusText);
+          console.log("Failed to fetch user data:");
         }
       } catch (error) {
-        console.error("An error occurred:", error.message);
+        console.log("An error occurred:", error.message);
       }
     };
 
@@ -173,8 +176,8 @@ const Header = () => {
   };
 
   return (
-    <header className="header-container">
-      <Navbar variant="dark">
+    <header className="header-container responsive-header">
+      <Navbar expand="md" variant="dark">
         <Container>
           <Navbar.Brand className="header-brand">
             <img
@@ -187,6 +190,13 @@ const Header = () => {
             <Navbar.Text className="header-text" style={{ color: "white" }}>
               CAMPUS ROOM STATUS DASHBOARD TRACKER SYSTEM
             </Navbar.Text>
+            <Navbar.Text
+              className="header-text-responsive"
+              style={{ color: "white" }}
+            >
+              CAMPUS ROOM STATUS <br />
+              DASHBOARD TRACKER SYSTEM
+            </Navbar.Text>
           </Navbar.Brand>
         </Container>
       </Navbar>
@@ -194,7 +204,9 @@ const Header = () => {
       {/* Logout button */}
       <div className="right-content">
         {/* User-specific info */}
-        <div className="user-details">{renderUserInfo()}</div>
+        <div className="user-details responsive-userdetails">
+          {renderUserInfo()}
+        </div>
         {/* chech if there is a account */}
         {!user.course ? (
           <Button
@@ -216,9 +228,12 @@ const Header = () => {
         </Button>
       </div>
       {/* edit account modal */}
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Account</Modal.Title>
+      <Modal show={show} onHide={handleClose} className="responsive-modal">
+        <Modal.Header closeButton className="responsive-modal-header">
+          <Modal.Title style={{ marginBottom: "0.5rem" }}>
+            Edit Account
+          </Modal.Title>
+          <div className="user-info-res">{renderUserInfo()}</div>
         </Modal.Header>
         <Modal.Body>
           <Form>

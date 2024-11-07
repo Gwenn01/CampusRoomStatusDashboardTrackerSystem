@@ -1,0 +1,28 @@
+/*Responsive style for login*/
+@media (max-width: 768px) {
+  .responsive-login {
+    width: 60%px;
+  }
+}
+
+@media (max-width: 450px) {
+  .responsive-login {
+    width: 80%;
+    padding: 0.5rem;
+  }
+  .responsive-login h2 {
+    font-size: 0.5rem;
+  }
+  .responsive-login p {
+    font-size: 0.4rem;
+  }
+  .login .submit-container .btn-login {
+    width: 11rem;
+    height: 2rem;
+    margin: 0 10px 0 10px;
+    font-size: 0.8rem;
+    background-color: #555454;
+    box-shadow: 0 0 5px black;
+    border: none;
+  }
+}

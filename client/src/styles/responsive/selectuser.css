@@ -1,0 +1,37 @@
+/*Responsive style for select user*/
+@media (max-width: 850px) {
+  .responsive-selectuser-content {
+    width: 60%;
+  }
+}
+
+@media (max-width: 450px) {
+  .responsive-selectuser-content {
+    width: 80%;
+    padding: 0.5rem;
+  }
+  .responsive-selectuser-content h2 {
+    font-size: 0.5rem;
+  }
+  .responsive-selectuser-content p {
+    font-size: 0.4rem;
+  }
+  .responsive-selectuser-content .buttons .btn-selectuser {
+    font-size: 0.5rem;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+  }
+  .responsive-login {
+    width: 50%;
+  }
+}
+/*
+FORMAT
+  @media (max-width: 850px) {
+}
+
+
+@media (max-width: 400px) {
+ 
+}
+*/

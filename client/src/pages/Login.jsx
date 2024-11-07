@@ -5,6 +5,7 @@ import "../styles/login.css";
 import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Spinner from "../componets/Spinner";
+import "../styles/responsive/login.css";
 
 const Login = () => {
   const location = useLocation();
@@ -64,7 +65,7 @@ const Login = () => {
 
   return (
     <div className="container-login">
-      <div className="content-login">
+      <div className="content-login responsive-login">
         <img src={logo} alt="logo" />
         <h2>President Ramon Magsaysay State University</h2>
         <p>CAMPUS ROOM STATUS DASHBOARD TRACKER SYSTEM</p>
@@ -96,7 +97,7 @@ const Login = () => {
             <i className="icon fa fa-lock"></i>
           </div>
 
-          <div className="submit-container">
+          <div className="submit-container responsive-submit">
             <Button className="btn-login" type="submit">
               Login
             </Button>

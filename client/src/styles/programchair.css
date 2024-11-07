@@ -16,6 +16,7 @@
 }
 
 .container-pg .sidebar {
+  display: block;
   grid-column: 1/2;
   height: calc(100vh - 3.3rem);
   position: fixed;
@@ -26,6 +27,12 @@
   border-right: 1px solid #a0acae;
   box-shadow: 0 0 10px gray;
   width: 250px;
+  transition: transform 0.3s ease; /* Animation */
+  z-index: 1000;
+}
+/* Slide-in when the 'open' class is applied */
+.sidebar.open {
+  transform: translateX(0); /* Slide in */
 }
 
 .container-pg .sidebar .container-sidebarbtns {
@@ -71,6 +78,6 @@
   grid-column: 2/3;
   padding: 0.3rem;
   margin-left: 1rem;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
   padding-right: 2rem;
 }

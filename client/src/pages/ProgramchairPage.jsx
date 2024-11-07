@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import "../styles/programchair.css";
 import { useLocation, Link, Route, Routes } from "react-router-dom";
@@ -16,17 +16,36 @@ import manageCurriculum from "../assets/curriculum.png";
 import createAccountIcon from "../assets/create-account.png";
 import dashboard from "../assets/dashboard.png";
 import roomStatus from "../assets/roomstatus.png";
+import "../styles/responsive/userpage.css";
 
 const ProgramChairPage = () => {
   const location = useLocation();
   const { userData } = location.state || {};
   const user = userData || JSON.parse(localStorage.getItem("userData"));
+  // side bar
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
   return (
     <>
       <Header />
+      <button
+        className="toggle-sidebar"
+        onClick={toggleSidebar}
+        style={{
+          display: "fixed",
+          top: "10%",
+          left: "0",
+          fontSize: "1rem",
+          padding: "0 0.5rem 0 0.5rem",
+          border: "1px solid #ccc",
+          borderRadius: "10px",
+        }}
+      >
+        ☰
+      </button>
       <div className="container-pg">
-        <div className="sidebar">
+        <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
           <div className="container-sidebarbtns">
             <Link to="create-schedule">
               <Button variant="secondary" className="btn-sidebar">

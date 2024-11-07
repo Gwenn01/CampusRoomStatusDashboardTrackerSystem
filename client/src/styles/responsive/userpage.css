@@ -1,0 +1,54 @@
+@media (min-width: 851px) {
+  .sidebar {
+    transform: translateX(0); /* Visible by default */
+  }
+}
+
+@media (max-width: 850px) {
+  .container-pg {
+    display: grid;
+    grid-template-columns: 1fr !important;
+  }
+
+  .content-pg {
+    grid-column: 1/2 !important;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    transform: translateX(-100%);
+    z-index: 1000;
+    grid-column: 1/2 !important;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Toggle button for sidebar */
+  .toggle-sidebar {
+    display: block;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    z-index: 1100;
+    cursor: pointer;
+  }
+
+  .content-pg {
+    padding-top: 4rem;
+    padding-left: 1rem;
+  }
+  .container-pg .sidebar {
+    top: 3rem;
+  }
+  .container-pg .sidebar .container-sidebarbtns {
+    margin-top: 1.8rem;
+  }
+  /*Dashboard content*/
+}

@@ -8,7 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import logo from "../assets/logo.png";
 import Spinner from "../componets/Spinner";
 import { toast } from "react-toastify";
-import "../styles/responsive.css";
+import "../styles/responsive/selectuser.css";
 
 const SelectUser = () => {
   // handle the modal for the  STUDENTS
@@ -72,7 +72,7 @@ const SelectUser = () => {
   };
   return (
     <div className="container-selectuser">
-      <div className="content-selectuser">
+      <div className="content-selectuser responsive-selectuser-content">
         <img src={logo} alt="logo" />
         <h2>President Ramon Magsaysay State University</h2>
         <p>CAMPUS ROOM STATUS DASHBOARD TRACKER SYSTEM</p>
