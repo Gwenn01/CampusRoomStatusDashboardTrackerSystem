@@ -196,12 +196,33 @@ const RoomStatus = () => {
               className="room-card"
               style={{
                 backgroundColor:
-                  room.roomStatus === "vacant" ? "lightgreen" : "lightcoral",
+                  room.roomStatus === "vacant"
+                    ? "lightgreen"
+                    : room.roomStatus === "occupied"
+                    ? "lightcoral"
+                    : room.roomStatus === "misallocated"
+                    ? "#E26640"
+                    : "white",
               }}
             >
               <Card.Body>
                 <Card.Title className="room-title">{room.roomName}</Card.Title>
                 <span>{room.roomStatus}</span>
+                <br />
+                {room.roomStatus == "occupied" ? (
+                  <span style={{ fontSize: "0.5rem" }}>
+                    Occupied in designated room and time.
+                  </span>
+                ) : (
+                  ""
+                )}
+                {room.roomStatus == "misallocated" ? (
+                  <span style={{ fontSize: "0.5rem" }}>
+                    Occupied in an undesignated room and time.
+                  </span>
+                ) : (
+                  ""
+                )}
                 <Card.Text className="room-body">
                   <img
                     src={
@@ -209,7 +230,8 @@ const RoomStatus = () => {
                     }
                     alt="room status"
                   />
-                  {room.roomStatus === "occupied" && (
+                  {room.roomStatus === "occupied" ||
+                  room.roomStatus === "misallocated" ? (
                     <div
                       className="room-info d-flex justify-content-center align-items-center flex-column"
                       style={{ fontSize: "0.7rem" }}
@@ -217,6 +239,8 @@ const RoomStatus = () => {
                       <span>{room.instructorName}</span>
                       <span>Time in: {room.timeIn}</span>
                     </div>
+                  ) : (
+                    ""
                   )}
                 </Card.Text>
                 <Button

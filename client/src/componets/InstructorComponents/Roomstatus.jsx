@@ -101,12 +101,13 @@ const RoomStatus = () => {
   // HANDLE THE CHECK IN AND OUT BUTTON
   // handle the status button
   const handleStatusButtonIn = (room_id, status, room_name) => {
+    // Check if the room is already occupied
+    if (checkIfTheRoomIsAlreadyOccupied(room_id)) return;
     // Check if the room is already occupied; if so, display an error and stop further processing
-    if (checkStatus(room_id, "occupied")) return; // Terminate if the room is vacan
+    if (checkStatus(room_id, "occupied")) return; // Terminate if the room is vacant
     // check if you already in the room
     if (checkDuplicatedIn()) return;
     // check designated
-    console.log(checkDesignatedRoom(room_name));
     if (checkDesignatedRoom(room_name)) status = "occupied";
 
     // get the value if the instructor click in and out
@@ -231,7 +232,19 @@ const RoomStatus = () => {
   const checkDuplicatedIn = () => {
     return rooms.some((room) => {
       if (room.instructorName === user.instructor_name) {
-        toast.info("You can only check into one room.");
+        toast.error("You can only check into one room.");
+        return true; // Stop as soon as a match is found
+      }
+      return false;
+    });
+  };
+  const checkIfTheRoomIsAlreadyOccupied = (room_id) => {
+    return rooms.some((room) => {
+      if (
+        room.id == room_id &&
+        (room.roomStatus == "occupied" || room.roomStatus == "misallocated")
+      ) {
+        toast.error("This room is already occupied.");
         return true; // Stop as soon as a match is found
       }
       return false;
