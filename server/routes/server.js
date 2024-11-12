@@ -1,5 +1,7 @@
 const route = require("express").Router();
 const dbCon = require("./connection");
+const fileUpload = require("express-fileupload");
+const pdfParser = require("pdf-parse");
 // querying data in the databse
 const allCourseData = require("./Query/Course/allCourse");
 const courseData = require("./Query/Course/getCourse");
@@ -75,6 +77,24 @@ route.get("/login", async (req, res) => {
     // Send the data as JSON response
     res.status(200).json(loginData);
   } catch (err) {
+    res.status(500).json({
+      error: "An error occurred while fetching data",
+      details: err.message,
+    });
+  }
+});
+// verify the cor of students
+route.use(fileUpload());
+route.post("/verify-cor", async (req, res) => {
+  try {
+    if (!req.files && !req.files.pdfFile) {
+      res.status(400).json({ error: "No file uploaded" });
+      res.end();
+    }
+    pdfParser(req.files.pdfFile).then((data) => {
+      res.status(200).json(data.text);
+    });
+  } catch (error) {
     res.status(500).json({
       error: "An error occurred while fetching data",
       details: err.message,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/selectuser.css";
-import { Table, Container, Row, Col } from "react-bootstrap";
+import { Row, Col, Form, InputGroup, Alert } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -11,65 +11,116 @@ import { toast } from "react-toastify";
 import "../styles/responsive/selectuser.css";
 
 const SelectUser = () => {
-  // handle the modal for the  STUDENTS
+  // handle the modatl
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  // variable for  STUDENTS data
+  // state to store data
   const [courseData, setCourseData] = useState([]);
   const [course, setCourse] = useState("");
   const [year, setYear] = useState("");
   const [section, setSection] = useState("");
-  // handle the navigation to the different pages based on the role
-  const [loading, setLoading] = useState(false); // State to manage loading
-  const [activeButton, setActiveButton] = useState(null); // State to track which button is clicked
+  const [loading, setLoading] = useState(false);
+  const [activeButton, setActiveButton] = useState(null);
+  const [studentID, setstudentID] = useState("");
+  const [file, setFile] = useState(null);
+  const [verificationResult, setVerificationResult] = useState("");
+
   const navigate = useNavigate();
-  // fetch the course from backend
+  // fetch the course in the database
   useEffect(() => {
     fetch("http://localhost:5000/api/course")
       .then((response) => response.json())
       .then((data) => setCourseData(data))
       .catch((error) => console.error("Error fetching course data:", error));
   }, []);
-  // function for handle navigation
+  // handle the navigation and the role
   const handleNavigation = (path, role, button) => {
-    setActiveButton(button); // Set clicked button
-    navigate(path, { state: { role } }); // Navigate after delay
+    setActiveButton(button);
+    navigate(path, { state: { role } });
   };
-  // function for handle navigation for STUDENTS
+  // handle change
+  const handleCourse = (eventKey) => setCourse(eventKey);
+  const handleYear = (eventKey) => setYear(eventKey);
+  const handleSection = (eventKey) => setSection(eventKey);
+
+  const handleCorChange = (e) => setstudentID(e.target.value);
+  const handleFileChange = (e) => setFile(e.target.files[0]);
+  // handle the verification
+  const handleVerify = async () => {
+    if (!file) {
+      setVerificationResult("Please upload a PDF file.");
+      toast.error("Please upload a PDF file.");
+      return;
+    }
+    if (!studentID) {
+      setVerificationResult("Please enter a Student ID.");
+      toast.error("Please enter Student ID.");
+      return;
+    }
+    if (!course && !year && !section) {
+      setVerificationResult("Please select a course, year, and section.");
+      toast.error("Please select a course, year, and section.");
+      return;
+    }
+    let convertCourseYearSection = "";
+    if (course == "BS Information Technology") {
+      convertCourseYearSection = "BSINFOTECH";
+    } else {
+      convertCourseYearSection = course.toUpperCase().replace(/\s+/g, "");
+    }
+    convertCourseYearSection =
+      convertCourseYearSection + " " + year[0] + section[0];
+    try {
+      const formData = new FormData();
+      formData.append("pdfFile", file);
+      fetch("http://localhost:5000/api/verify-cor", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const isStudIDPresent = data.includes(studentID);
+          const isCourseYearSecPresent = data.includes(
+            convertCourseYearSection
+          );
+
+          if (isStudIDPresent && isCourseYearSecPresent) {
+            setVerificationResult("Verification Sucessfully.");
+            toast.success("Verification Sucessfully.");
+          } else {
+            setVerificationResult("Verification Failed.");
+            toast.error("Verification Failed.");
+          }
+        });
+    } catch (error) {
+      setVerificationResult("Error reading PDF file.");
+      toast.error("Error reading PDF file.");
+    }
+  };
+  // handle the navigation to different pages
   const handleNavigationStudent = (e) => {
     e.preventDefault();
     if (course === "" || year === "" || section === "") {
       toast.error("Please fill all the fields");
       return;
     }
-    const handleNavigation = (path, userData) => {
-      setLoading(true); // Start spinner
-      setTimeout(() => {
-        navigate(path, { state: { userData } }); // Navigate and pass user data
-        setLoading(false); // Stop spinner
-      }, 1000); // 1000 ms delay (adjust as needed)
-    };
-    const studentData = {
-      course: course,
-      year: year,
-      section: section,
-    };
-    localStorage.setItem("userData", JSON.stringify(studentData)); // Save user data in localStorage
-    handleNavigation("/student", studentData);
-    toast.success("Login successfully!");
-    handleClose();
+    if (verificationResult != "Verification Sucessfully.") {
+      toast.error("Please verify the COR code before proceeding.");
+      return;
+    }
+
+    const studentData = { course, year, section };
+    localStorage.setItem("userData", JSON.stringify(studentData));
+    setLoading(true);
+    setTimeout(() => {
+      navigate("/student", { state: { userData: studentData } });
+      setLoading(false);
+      toast.success("Login successfully!");
+      handleClose();
+    }, 1000);
   };
-  // function for students modal for students data
-  const handleCourse = (eventKey) => {
-    setCourse(eventKey);
-  };
-  const handleYear = (eventKey) => {
-    setYear(eventKey);
-  };
-  const handleSection = (eventKey) => {
-    setSection(eventKey);
-  };
+
   return (
     <div className="container-selectuser">
       <div className="content-selectuser responsive-selectuser-content">
@@ -111,7 +162,6 @@ const SelectUser = () => {
           </Button>
         </div>
       </div>
-      {loading && <Spinner />}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Welcome Students</Modal.Title>
@@ -128,16 +178,14 @@ const SelectUser = () => {
                   {course || "Select Course"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  {courseData.map((item) => {
-                    return (
-                      <Dropdown.Item
-                        key={item.course_id}
-                        eventKey={item.course_name}
-                      >
-                        {item.course_name}
-                      </Dropdown.Item>
-                    );
-                  })}
+                  {courseData.map((item) => (
+                    <Dropdown.Item
+                      key={item.course_id}
+                      eventKey={item.course_name}
+                    >
+                      {item.course_name}
+                    </Dropdown.Item>
+                  ))}
                 </Dropdown.Menu>
               </Dropdown>
             </Col>
@@ -182,13 +230,42 @@ const SelectUser = () => {
               </Dropdown>
             </Col>
           </Row>
+          <Row>
+            <Col>
+              <div>
+                <h4>Verify Your COR Code</h4>
+                <Form.Group controlId="studentID" className="mb-3">
+                  <Form.Label>Enter your Student ID</Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type="text"
+                      value={studentID}
+                      onChange={handleCorChange}
+                      placeholder="Enter your Student ID:"
+                    />
+                  </InputGroup>
+                </Form.Group>
+                <Form.Group controlId="studentID" className="mb-3">
+                  <Form.Label>Upload COR file</Form.Label>
+                  <Form.Control type="file" onChange={handleFileChange} />
+                </Form.Group>
+                <Button variant="primary" onClick={handleVerify}>
+                  Verify COR
+                </Button>
+              </div>
+            </Col>
+          </Row>
         </Modal.Body>
         <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
           <Button variant="primary" onClick={handleNavigationStudent}>
             Login
           </Button>
         </Modal.Footer>
       </Modal>
+      {loading && <Spinner />}
     </div>
   );
 };
