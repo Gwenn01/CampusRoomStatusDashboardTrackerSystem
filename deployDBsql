@@ -1,0 +1,270 @@
+-- MySQL dump 10.13  Distrib 8.0.37, for Win64 (x86_64)
+--
+-- Host: localhost    Database: room_tracker
+-- ------------------------------------------------------
+-- Server version	8.0.37
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `course`
+--
+
+DROP TABLE IF EXISTS `course`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `course` (
+  `course_id` int NOT NULL AUTO_INCREMENT,
+  `course_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`course_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `course`
+--
+
+LOCK TABLES `course` WRITE;
+/*!40000 ALTER TABLE `course` DISABLE KEYS */;
+INSERT INTO `course` VALUES (1,'BS Information Technology'),(2,'BS Computer Science');
+/*!40000 ALTER TABLE `course` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `curriculum`
+--
+
+DROP TABLE IF EXISTS `curriculum`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `curriculum` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `units` int NOT NULL,
+  `year` varchar(10) NOT NULL,
+  `semester` varchar(20) NOT NULL,
+  `course_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_course` (`course_id`),
+  CONSTRAINT `fk_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `curriculum`
+--
+
+LOCK TABLES `curriculum` WRITE;
+/*!40000 ALTER TABLE `curriculum` DISABLE KEYS */;
+INSERT INTO `curriculum` VALUES (1,'EN+','Enhanced Communication Skills',3,'1stYear','1stSemester',1),(2,'CC101','Introduction to Computing',3,'1stYear','1stSemester',1),(3,'NSTP1','National Service Training Program 1',3,'1stYear','1stSemester',1),(4,'PE 1B','Physical Activities Toward Health and Fitness',2,'1stYear','1stSemester',1),(5,'GEC 7','Science Technology and Society',3,'1stYear','1stSemester',1),(6,'GEC 1','Understanding the Self',3,'1stYear','1stSemester',1),(7,'FKN 1','Kontekswalisadong Komunikasyon sa Filipno',3,'1stYear','1stSemester',1),(8,'NSTP2C','Civic Welfare Training Service II',3,'1stYear','2ndSemester',1),(9,'PE 2B','Physical Activities Toward Health and Fitness 2',2,'1stYear','2ndSemester',1),(10,'GEC 2A','Reading in the Philippine History (with IP Education)',3,'1stYear','2ndSemester',1),(11,'GEC 4','Mathematics in the Modern World',3,'1stYear','2ndSemester',1),(12,'HCI 101','Introduction to Human-Computer Interaction',3,'1stYear','2ndSemester',1),(13,'GEC 5','Purposive Communication',3,'1stYear','2ndSemester',1),(14,'CC 102','Computer Programming 1',3,'1stYear','2ndSemester',1),(15,'ITES 102','Computer Hardware System',3,'1stYear','2ndSemester',1),(16,'PE 30IC','Physical Activities Toward Health and Fitness 3',2,'2ndYear','1stSemester',1),(17,'MS 101','Discrete Mathematics',3,'2ndYear','1stSemester',1),(18,'GEC 3c','The Contempory World (Peace Education)',3,'2ndYear','1stSemester',1),(19,'GEE 1S','ASEAN Culture Studies',3,'2ndYear','1stSemester',1),(20,'ITE 1','IT Elective 1-Web Systems and Technologies',3,'2ndYear','1stSemester',1),(21,'GEM','The Life and Works of Rizal',3,'2ndYear','1stSemester',1),(22,'CC 103','Computer Programming II',3,'2ndYear','1stSemester',1),(23,'PE 401D','Physical Activities Toward Health and Fitness 4',2,'2ndYear','2ndSemester',1),(24,'GEC 6','Art Appreciation',3,'2ndYear','2ndSemester',1),(25,'GEE 7','Gender and Society',3,'2ndYear','2ndSemester',1),(26,'GEE 14','TechoEnterpreneurship',3,'2ndYear','2ndSemester',1),(27,'CC 105','Information Management',3,'2ndYear','2ndSemester',1),(28,'ITE 2','IT Elective 2 Object-Oriented Programming',3,'2ndYear','2ndSemester',1),(29,'CC 104','Data Structure and Algorithms',3,'2ndYear','2ndSemester',1),(30,'ITP','Integrative Programming Technologies 1',3,'3rdYear','1stSemester',1),(31,'PF 102','Event Driven Programming',3,'3rdYear','1stSemester',1),(32,'ITE 3','IT Elective 3 Platform Technologies',3,'3rdYear','1stSemester',1),(33,'EN 1','Scientific And Technical Writing',3,'3rdYear','1stSemester',1),(34,'GDDAT','Game Development and Digital Animation Technology',3,'3rdYear','1stSemester',1),(35,'IM 101','Advance Database Systems',3,'3rdYear','1stSemester',1),(36,'GEC 8','Ethics',3,'3rdYear','2ndSemester',1),(37,'ITE 4','IT Elective 4 Artificial Intelligence',3,'3rdYear','2ndSemester',1),(38,'IAS 101','Information Assurance and Security',3,'3rdYear','2ndSemester',1),(39,'NET 101','Networking 1',3,'3rdYear','2ndSemester',1),(40,'CC 106','Application Development and Emerging Technologies',3,'3rdYear','2ndSemester',1),(41,'SIA 101','System Integration and Architecture 1',3,'3rdYear','2ndSemester',1),(42,'CAP 101','Capstone Project and Research 1',3,'3rdYear','2ndSemester',1),(43,'NET 102','Networking 2',3,'3rdYear','Summer/Midyear',1),(44,'SP 101','Social Issues and Professional',3,'3rdYear','Summer/Midyear',1),(45,'MS 102','Quantitative Methods',3,'3rdYear','Summer/Midyear',1),(46,'FLBG','Foreign Language',3,'4thYear','1stSemester',1),(47,'CAP 102','Capstone Project and Research 2',3,'4thYear','1stSemester',1),(48,'SA 101','System Administrator and Maintenance',3,'4thYear','1stSemester',1),(49,'PRAC 101','Practicum (600 hours)',3,'4thYear','2ndSemester',1),(112,'CC 101','Introduction to Computing',3,'1stYear','1stSemester',2),(113,'EN +','Enhanced Communication Skills',3,'1stYear','1stSemester',2),(114,'GEC 1','Understanding the Self',3,'1stYear','1stSemester',2),(115,'GEC 3AA','The Contemporary World',3,'1stYear','1stSemester',2),(116,'GEC 7','Science, Technology and Society',3,'1stYear','1stSemester',2),(117,'FILN 1','Kontekstwalisadong Komunikasyon sa Filipino',3,'1stYear','1stSemester',2),(118,'PE 1B','Physical Activities Toward Health and Fitness',2,'1stYear','1stSemester',2),(119,'NSTP 1','National Service Training Program I',3,'1stYear','1stSemester',2),(120,'NSTP 1C','Civic Welfare Training Service I',3,'1stYear','1stSemester',2),(121,'NSTP 1L','Literacy Training Services I',3,'1stYear','1stSemester',2),(122,'NSTP 1R','Reserve Officers\' Training Corps I',3,'1stYear','1stSemester',2),(123,'CC 102','Computer Programming I',3,'1stYear','2ndSemester',2),(124,'FMCS 101','Fundamentals of Mathematics',3,'1stYear','2ndSemester',2),(125,'GEC 2AA','Readings in Philippine History',3,'1stYear','2ndSemester',2),(126,'GEC 4','Mathematics in the Modern World',3,'1stYear','2ndSemester',2),(127,'GEC 5','Purposive Communication',3,'1stYear','2ndSemester',2),(128,'GEC 6','Art Appreciation',3,'1stYear','2ndSemester',2),(129,'PE 2B','Physical Activities Towards Health and Fitness',2,'1stYear','2ndSemester',2),(130,'NSTP 2','National Service Training Program II',3,'1stYear','2ndSemester',2),(131,'NSTP 2C','Civic Welfare Training Service II',3,'1stYear','2ndSemester',2),(132,'NSTP 2R','Reserve Officers\' Training Corps II',3,'1stYear','2ndSemester',2),(133,'NSTP 2L','Literacy Training Service II',3,'1stYear','2ndSemester',2),(134,'DS 101','Discrete Structures I',3,'2ndYear','1stSemester',2),(135,'CC 103','Computer Programming II',3,'2ndYear','1stSemester',2),(136,'CSE 1','CS Elective I',3,'2ndYear','1stSemester',2),(137,'FLNG','Foreign Language',3,'2ndYear','1stSemester',2),(138,'MTN 4','Calculus I',3,'2ndYear','1stSemester',2),(139,'GEM','The Life and Works of Rizal',3,'2ndYear','1stSemester',2),(140,'GEE 14','Techno Entrepreneurship',3,'2ndYear','1stSemester',2),(141,'PE 301C','Physical Activities Toward Health and Fitness',2,'2ndYear','1stSemester',2),(142,'DS 102','Discrete Structures II',3,'2ndYear','2ndSemester',2),(143,'CC 104','Data Structures and Algorithms',3,'2ndYear','2ndSemester',2),(144,'CC 106','Applications Development and Emergency',3,'2ndYear','2ndSemester',2),(145,'SDF 104','Object-Oriented Programming',3,'2ndYear','2ndSemester',2),(146,'MTN 5','Calculus II',3,'2ndYear','2ndSemester',2),(147,'GEE 15','ASEAN Culture and Studies',3,'2ndYear','2ndSemester',2),(148,'PSTAT 101','Probability Theory and Statistical Associate',3,'2ndYear','2ndSemester',2),(149,'PE 401D','Physical Activities Toward Health and Fitness',2,'2ndYear','2ndSemester',2),(150,'CC 105','Information Management',3,'3rdYear','1stSemester',2),(151,'SE 101','Software Engineering I',3,'3rdYear','1stSemester',2),(152,'CSE 2','CS Elective II',3,'3rdYear','1stSemester',2),(153,'NC 101','Networks and Communications',3,'3rdYear','1stSemester',2),(154,'AL 101','Algorithms and Complexity',3,'3rdYear','1stSemester',2),(155,'AR 101','Architecture and Organization',3,'3rdYear','1stSemester',2),(156,'MTN 6','Differential Equations',3,'3rdYear','1stSemester',2),(157,'GEE 7','Gender and Society',3,'3rdYear','2ndSemester',2),(158,'PL 101','Programming Languages',3,'3rdYear','2ndSemester',2),(159,'OS 101','Operating Systems',3,'3rdYear','2ndSemester',2),(160,'SE 102','Software Engineering II',3,'3rdYear','2ndSemester',2),(161,'THS 102','CS Thesis Writing I',3,'3rdYear','2ndSemester',2),(162,'EN 1','Scientific and Technical Writing',3,'3rdYear','2ndSemester',2),(163,'GEC 8','Ethics',3,'3rdYear','2ndSemester',2),(164,'AL 102','Automata Theory and Formal Language',3,'3rdYear','2ndSemester',2),(165,'IAS 101','Information Assurance and Security',2,'3rdYear','2ndSemester',2),(166,'HCI 101','Introduction to Human Computer Interaction',1,'4thYear','1stSemester',2),(167,'SP 101','Social Issues and Professional Practices',3,'4thYear','1stSemester',2),(168,'CSE 3','CS Elective III',3,'4thYear','1stSemester',2),(169,'THS 103','CS Thesis Writing II',3,'4thYear','1stSemester',2),(170,'PRC 1011','PRACTICUM (600 hours)',6,'4thYear','2ndSemester',2);
+/*!40000 ALTER TABLE `curriculum` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `examschedule`
+--
+
+DROP TABLE IF EXISTS `examschedule`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `examschedule` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `course` varchar(255) DEFAULT NULL,
+  `semester` varchar(255) DEFAULT NULL,
+  `stud_year` varchar(255) DEFAULT NULL,
+  `section` varchar(255) DEFAULT NULL,
+  `instructor` varchar(255) DEFAULT NULL,
+  `subject_description` varchar(255) DEFAULT NULL,
+  `time_sched` varchar(255) DEFAULT NULL,
+  `room` varchar(255) DEFAULT NULL,
+  `day_sched` varchar(255) DEFAULT NULL,
+  `instructor_id` int DEFAULT NULL,
+  `course_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_instructor_forexam` (`instructor_id`),
+  KEY `fk_course_examscheudle` (`course_id`),
+  CONSTRAINT `fk_course_examscheudle` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`),
+  CONSTRAINT `fk_instructor_forexam` FOREIGN KEY (`instructor_id`) REFERENCES `instructor` (`instructor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `examschedule`
+--
+
+LOCK TABLES `examschedule` WRITE;
+/*!40000 ALTER TABLE `examschedule` DISABLE KEYS */;
+/*!40000 ALTER TABLE `examschedule` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `instructor`
+--
+
+DROP TABLE IF EXISTS `instructor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `instructor` (
+  `instructor_id` int NOT NULL AUTO_INCREMENT,
+  `instructor_name` varchar(255) DEFAULT NULL,
+  `instructor_username` varchar(255) DEFAULT NULL,
+  `instructor_password` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`instructor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2446 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `instructor`
+--
+
+LOCK TABLES `instructor` WRITE;
+/*!40000 ALTER TABLE `instructor` DISABLE KEYS */;
+INSERT INTO `instructor` VALUES (2411,'Melojean C. Marave','melojean','123'),(2412,'Carl Angelo S. Pamploma','carl','123'),(2413,'Geoffrey S. Sepillo','geoffrey','123'),(2414,'Hansel S. Ada','hansel','123'),(2415,'John Lenon E. Agatep','jl','123'),(2416,'Israel M. Cabasug','israel','123'),(2417,'Niemea M. Galang','niema','123'),(2418,'Jason S. Arates','jason','123'),(2419,'Fiel M. Dullas','fiel','123'),(2421,'Darwin M. Morana','darwin','123'),(2422,'Ronnel M. Mesia','ronnel','123'),(2423,'May Ann A. Acera','mayann','123'),(2424,'Joseph J. Juliano','joseph','123'),(2425,'Daniel A. Bachillar','daniel','123'),(2426,'Darly John Ragadio','darly','123'),(2427,'Eufemia Sion','eufemia','123'),(2428,'Marionne Joyce F. Tapado','marionne','123'),(2429,'Rowela Gongora','rowela','123'),(2431,'Joseph S. Cortez','josephc','123'),(2432,'King Myer Mantolino','kingmyer','123'),(2433,'Jamil Tan Elamparo','jamil','123'),(2434,'Rowena Orboc','rowena','123'),(2435,'Hicel Mae Mas','hicel','123'),(2436,'Karen Quintoriano','karen','123'),(2437,'Ashley Rambuyong','ashley','123'),(2438,'Kie Ann Josafat','kieann','123'),(2439,'Jio Erika Pelinio','jio','123'),(2441,'Dane Nalicat','dane','123'),(2442,'Radowena Payumo','radowena','123'),(2443,'Michael G. Albino','michael','123'),(2444,'Apple Escalante','apple','123'),(2445,'Katherine Uy','katherine','123');
+/*!40000 ALTER TABLE `instructor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `programchair`
+--
+
+DROP TABLE IF EXISTS `programchair`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `programchair` (
+  `programchair_id` int NOT NULL AUTO_INCREMENT,
+  `programchair_name` varchar(255) DEFAULT NULL,
+  `programchair_username` varchar(255) DEFAULT NULL,
+  `programchair_password` varchar(255) DEFAULT NULL,
+  `course_id` int DEFAULT NULL,
+  PRIMARY KEY (`programchair_id`),
+  KEY `fk_course_programchair` (`course_id`),
+  CONSTRAINT `fk_course_programchair` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `programchair`
+--
+
+LOCK TABLES `programchair` WRITE;
+/*!40000 ALTER TABLE `programchair` DISABLE KEYS */;
+INSERT INTO `programchair` VALUES (241,'ProgramchairIT Geoffrey S. Sepillo','programchairIT','123',1),(242,'ProgramchairCS Carl Angelo S. Pamplona','programchairCS','123',2);
+/*!40000 ALTER TABLE `programchair` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reports`
+--
+
+DROP TABLE IF EXISTS `reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reports` (
+  `report_id` int NOT NULL AUTO_INCREMENT,
+  `room_name` varchar(255) NOT NULL,
+  `instructor_name` varchar(255) NOT NULL,
+  `time_in` varchar(255) NOT NULL,
+  `time_out` varchar(255) NOT NULL,
+  `time_count` varchar(255) NOT NULL,
+  `instructor_id` int NOT NULL,
+  `date_reports` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`report_id`),
+  KEY `fk_instructor_reports` (`instructor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reports`
+--
+
+LOCK TABLES `reports` WRITE;
+/*!40000 ALTER TABLE `reports` DISABLE KEYS */;
+INSERT INTO `reports` VALUES (1,'Lab 2','Hansel S. Ada','12:43:25 PM','12:43:32 PM','0:0:7',2414,'11/12/2024'),(2,'Room 2','Fiel M. Dullas','12:46:05 PM','12:46:35 PM','0:0:30',2419,'11/12/2024'),(3,'Room 1','Fiel M. Dullas','12:46:40 PM','12:46:42 PM','0:0:2',2419,'11/12/2024'),(4,'Room 1','Fiel M. Dullas','3:11:21 PM','3:21:34 PM','0:10:13',2419,'11/12/2024'),(5,'Room 2','Hansel S. Ada','3:25:45 PM','3:26:06 PM','0:0:21',2414,'11/12/2024'),(6,'Room 1','Fiel M. Dullas','3:21:38 PM','3:26:29 PM','0:4:51',2419,'11/12/2024');
+/*!40000 ALTER TABLE `reports` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `rooms`
+--
+
+DROP TABLE IF EXISTS `rooms`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rooms` (
+  `id` int NOT NULL,
+  `roomName` varchar(255) DEFAULT NULL,
+  `roomStatus` varchar(255) DEFAULT NULL,
+  `instructorName` varchar(255) DEFAULT NULL,
+  `timeIn` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rooms`
+--
+
+LOCK TABLES `rooms` WRITE;
+/*!40000 ALTER TABLE `rooms` DISABLE KEYS */;
+INSERT INTO `rooms` VALUES (1,'Room 1','vacant','',''),(2,'Room 2','vacant','',''),(3,'Room 3','vacant','',''),(4,'Room 4','vacant','',''),(5,'Room 5','vacant',NULL,NULL),(6,'Room 6','vacant',NULL,NULL),(7,'Room 7','vacant','',''),(8,'Room 8','vacant','',''),(9,'Room 9','vacant',NULL,NULL),(10,'Room 10','vacant',NULL,NULL),(11,'Room 11','vacant',NULL,NULL),(12,'Lab 1','vacant',NULL,NULL),(13,'Lab 2','vacant','',''),(14,'Lab 3','vacant',NULL,NULL),(15,'Lab 4','vacant',NULL,NULL),(16,'Lab 5','vacant',NULL,NULL),(17,'Lab 6','vacant',NULL,NULL);
+/*!40000 ALTER TABLE `rooms` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `schedule`
+--
+
+DROP TABLE IF EXISTS `schedule`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `schedule` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `course` varchar(255) DEFAULT NULL,
+  `semester` varchar(255) DEFAULT NULL,
+  `stud_year` varchar(255) DEFAULT NULL,
+  `section` varchar(255) DEFAULT NULL,
+  `instructor` varchar(255) DEFAULT NULL,
+  `subject_description` varchar(255) DEFAULT NULL,
+  `time_sched` varchar(255) DEFAULT NULL,
+  `room` varchar(255) DEFAULT NULL,
+  `day_sched` varchar(255) DEFAULT NULL,
+  `instructor_id` int DEFAULT NULL,
+  `course_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_instructor` (`instructor_id`),
+  KEY `fk_course_scheudle` (`course_id`),
+  CONSTRAINT `fk_course_scheudle` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`),
+  CONSTRAINT `fk_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructor` (`instructor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=190 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `schedule`
+--
+
+LOCK TABLES `schedule` WRITE;
+/*!40000 ALTER TABLE `schedule` DISABLE KEYS */;
+INSERT INTO `schedule` VALUES (1,'BS Information Technology','1stSemester','1stYear','A','Radowena Payumo','EN+ Enhanced Communication Skills (3 units)','10:30 AM - 12:00 PM','Room 1','Monday',2442,1),(2,'BS Information Technology','1stSemester','1stYear','A','Radowena Payumo','EN+ Enhanced Communication Skills (3 units)','10:30 AM - 12:00 PM','Room 1','Wednesday',2442,1),(3,'BS Information Technology','1stSemester','1stYear','A','Melojean C. Marave','CC101 Introduction to Computing (3 units)','2:00 PM - 3:00 PM','Room 8','Monday',2411,1),(4,'BS Information Technology','1stSemester','1stYear','A','Melojean C. Marave','CC101 Introduction to Computing (3 units)','2:00 PM - 3:00 PM','Room 8','Wednesday',2411,1),(5,'BS Information Technology','1stSemester','1stYear','A','Melojean C. Marave','CC101 Introduction to Computing (3 units)','7:00 AM - 9:00 AM','Lab 1','Monday',2411,1),(6,'BS Information Technology','1stSemester','1stYear','A','Melojean C. Marave','CC101 Introduction to Computing (3 units)','7:00 AM - 9:00 AM','Lab 1','Wednesday',2411,1),(7,'BS Information Technology','1stSemester','1stYear','A','Rowela Gongora','NSTP1 National Service Training Program 1 (3 units)','2:00 PM - 5:00 PM','Room 2','Saturday',2429,1),(8,'BS Information Technology','1stSemester','1stYear','A','Apple Escalante','PE 1B Physical Activities Toward Health and Fitness (2 units)','9:30 AM - 10:30 AM','Room 10','Tuesday',2444,1),(9,'BS Information Technology','1stSemester','1stYear','A','Apple Escalante','PE 1B Physical Activities Toward Health and Fitness (2 units)','9:30 AM - 10:30 AM','Room 10','Thursday',2444,1),(10,'BS Information Technology','1stSemester','1stYear','A','Kie Ann Josafat','GEC 7 Science Technology and Society (3 units)','9:00 AM - 10:30 AM','Room 1','Monday',2438,1),(11,'BS Information Technology','1stSemester','1stYear','A','Kie Ann Josafat','GEC 7 Science Technology and Society (3 units)','9:00 AM - 10:30 AM','Room 1','Wednesday',2438,1),(12,'BS Information Technology','1stSemester','1stYear','A','Kie Ann Josafat','GEC 1 Understanding the Self (3 units)','12:00 PM - 2:00 PM','Room 1','Tuesday',2438,1),(13,'BS Information Technology','1stSemester','1stYear','A','Kie Ann Josafat','GEC 1 Understanding the Self (3 units)','12:00 PM - 2:00 PM','Room 1','Thursday',2438,1),(14,'BS Information Technology','1stSemester','1stYear','A','Kie Ann Josafat','FKN 1 Kontekswalisadong Komunikasyon sa Filipno (3 units)','7:00 AM - 9:00 AM','Room 1','Tuesday',2438,1),(15,'BS Information Technology','1stSemester','1stYear','A','Kie Ann Josafat','FKN 1 Kontekswalisadong Komunikasyon sa Filipno (3 units)','7:00 AM - 9:00 AM','Room 1','Thursday',2438,1),(16,'BS Information Technology','1stSemester','1stYear','B','Jio Erika Pelinio','EN+ Enhanced Communication Skills (3 units)','9:00 AM - 10:30 AM','Room 2','Monday',2439,1),(17,'BS Information Technology','1stSemester','1stYear','B','Jio Erika Pelinio','EN+ Enhanced Communication Skills (3 units)','9:00 AM - 10:30 AM','Room 2','Wednesday',2439,1),(18,'BS Information Technology','1stSemester','1stYear','B','Melojean C. Marave','CC101 Introduction to Computing (3 units)','1:00 PM - 2:00 PM','Lab 1','Monday',2411,1),(19,'BS Information Technology','1stSemester','1stYear','B','Melojean C. Marave','CC101 Introduction to Computing (3 units)','1:00 PM - 2:00 PM','Lab 1','Wednesday',2411,1),(20,'BS Information Technology','1stSemester','1stYear','B','Melojean C. Marave','CC101 Introduction to Computing (3 units)','7:30 AM - 9:00 AM','Room 8','Tuesday',2411,1),(21,'BS Information Technology','1stSemester','1stYear','B','Melojean C. Marave','CC101 Introduction to Computing (3 units)','7:30 AM - 9:00 AM','Room 8','Thursday',2411,1),(22,'BS Information Technology','1stSemester','1stYear','B','Rowela Gongora','NSTP1 National Service Training Program 1 (3 units)','11:00 AM - 2:00 PM','Room 3','Saturday',2429,1),(23,'BS Information Technology','1stSemester','1stYear','B','Apple Escalante','PE 1B Physical Activities Toward Health and Fitness (2 units)','10:30 AM - 11:30 AM','Room 2','Tuesday',2444,1),(24,'BS Information Technology','1stSemester','1stYear','B','Apple Escalante','PE 1B Physical Activities Toward Health and Fitness (2 units)','10:30 AM - 11:30 AM','Room 2','Thursday',2444,1),(29,'BS Information Technology','1stSemester','1stYear','B','Kie Ann Josafat','FKN 1 Kontekswalisadong Komunikasyon sa Filipno (3 units)','9:00 AM - 10:30 AM','Room 2','Tuesday',2438,1),(30,'BS Information Technology','1stSemester','1stYear','B','Kie Ann Josafat','FKN 1 Kontekswalisadong Komunikasyon sa Filipno (3 units)','9:00 AM - 10:30 AM','Room 2','Thursday',2438,1),(33,'BS Information Technology','1stSemester','1stYear','B','Jio Erika Pelinio','GEC 1 Understanding the Self (3 units)','2:00 PM - 3:30 PM','Room 1','Tuesday',2439,1),(34,'BS Information Technology','1stSemester','1stYear','B','Jio Erika Pelinio','GEC 1 Understanding the Self (3 units)','2:00 PM - 3:30 PM','Room 1','Thursday',2439,1),(35,'BS Information Technology','1stSemester','1stYear','B','Jio Erika Pelinio','GEC 7 Science Technology and Society (3 units)','7:00 AM - 9:00 AM','Room 2','Tuesday',2439,1),(36,'BS Information Technology','1stSemester','1stYear','B','Jio Erika Pelinio','GEC 7 Science Technology and Society (3 units)','7:00 AM - 9:00 AM','Room 2','Thursday',2439,1),(37,'BS Information Technology','1stSemester','1stYear','C','Jio Erika Pelinio','EN+ Enhanced Communication Skills (3 units)','12:00 PM - 1:30 PM','Room 2','Monday',2439,1),(38,'BS Information Technology','1stSemester','1stYear','C','Jio Erika Pelinio','EN+ Enhanced Communication Skills (3 units)','12:00 PM - 1:30 PM','Room 2','Wednesday',2439,1),(39,'BS Information Technology','1stSemester','1stYear','C','Jason S. Arates','CC101 Introduction to Computing (3 units)','1:00 PM - 2:30 PM','Room 2','Monday',2418,1),(40,'BS Information Technology','1stSemester','1stYear','C','Jason S. Arates','CC101 Introduction to Computing (3 units)','1:00 PM - 2:30 PM','Room 2','Wednesday',2418,1),(41,'BS Information Technology','1stSemester','1stYear','C','Jason S. Arates','CC101 Introduction to Computing (3 units)','2:00 PM - 3:30 PM','Lab 1','Tuesday',2418,1),(42,'BS Information Technology','1stSemester','1stYear','C','Jason S. Arates','CC101 Introduction to Computing (3 units)','2:00 PM - 3:30 PM','Lab 1','Thursday',2418,1),(43,'BS Information Technology','1stSemester','1stYear','C','Rowena Orboc','NSTP1 National Service Training Program 1 (3 units)','8:00 AM - 11:00 AM','Room 1','Saturday',2434,1),(44,'BS Information Technology','1stSemester','1stYear','C','Apple Escalante','PE 1B Physical Activities Toward Health and Fitness (2 units)','10:30 AM - 11:00 AM','Room 10','Monday',2444,1),(45,'BS Information Technology','1stSemester','1stYear','C','Apple Escalante','PE 1B Physical Activities Toward Health and Fitness (2 units)','10:30 AM - 11:00 AM','Room 10','Wednesday',2444,1),(46,'BS Information Technology','1stSemester','1stYear','C','Kie Ann Josafat','GEC 7 Science Technology and Society (3 units)','3:30 PM - 5:00 PM','Room 2','Monday',2438,1),(47,'BS Information Technology','1stSemester','1stYear','C','Kie Ann Josafat','GEC 7 Science Technology and Society (3 units)','3:30 PM - 5:00 PM','Room 2','Wednesday',2438,1),(48,'BS Information Technology','1stSemester','1stYear','C','Kie Ann Josafat','GEC 1 Understanding the Self (3 units)','2:30 PM - 4:00 PM','Room 1','Monday',2438,1),(49,'BS Information Technology','1stSemester','1stYear','C','Kie Ann Josafat','GEC 1 Understanding the Self (3 units)','2:30 PM - 4:00 PM','Room 1','Wednesday',2438,1),(50,'BS Information Technology','1stSemester','1stYear','C','Dane Nalicat','FKN 1 Kontekswalisadong Komunikasyon sa Filipno (3 units)','7:30 AM - 9:00 AM','Room 2','Monday',2441,1),(51,'BS Information Technology','1stSemester','1stYear','C','Dane Nalicat','FKN 1 Kontekswalisadong Komunikasyon sa Filipno (3 units)','7:30 AM - 9:00 AM','Room 2','Monday',2441,1),(52,'BS Information Technology','1stSemester','2ndYear','A','Apple Escalante','PE 30IC Physical Activities Toward Health and Fitness 3 (2 units)','1:00 PM - 2:00 PM','Room 9','Monday',2444,1),(53,'BS Information Technology','1stSemester','2ndYear','A','Apple Escalante','PE 30IC Physical Activities Toward Health and Fitness 3 (2 units)','1:00 PM - 2:00 PM','Room 9','Wednesday',2444,1),(54,'BS Information Technology','1stSemester','2ndYear','A','Apple Escalante','MS 101 Discrete Mathematics (3 units)','7:00 AM - 8:30 AM','Room 3','Monday',2444,1),(55,'BS Information Technology','1stSemester','2ndYear','A','Apple Escalante','MS 101 Discrete Mathematics (3 units)','7:00 AM - 8:30 AM','Room 3','Wednesday',2444,1),(56,'BS Information Technology','1stSemester','2ndYear','A','Kie Ann Josafat','GEC 3c The Contempory World (Peace Education) (3 units)','10:00 AM - 11:30 AM','Room 3','Tuesday',2438,1),(57,'BS Information Technology','1stSemester','2ndYear','A','Kie Ann Josafat','GEC 3c The Contempory World (Peace Education) (3 units)','10:00 AM - 11:30 AM','Room 3','Thursday',2438,1),(58,'BS Information Technology','1stSemester','2ndYear','A','Kie Ann Josafat','GEE 1S ASEAN Culture Studies (3 units)','12:00 PM - 1:30 PM','Room 3','Tuesday',2438,1),(59,'BS Information Technology','1stSemester','2ndYear','A','Kie Ann Josafat','GEE 1S ASEAN Culture Studies (3 units)','12:00 PM - 1:30 PM','Room 3','Thursday',2438,1),(60,'BS Information Technology','1stSemester','2ndYear','A','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','2:00 PM - 3:30 PM','Room 3','Monday',2421,1),(61,'BS Information Technology','1stSemester','2ndYear','A','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','2:00 PM - 3:30 PM','Room 3','Wednesday',2421,1),(62,'BS Information Technology','1stSemester','2ndYear','A','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','3:30 PM - 5:00 PM','Lab 2','Monday',2421,1),(63,'BS Information Technology','1stSemester','2ndYear','A','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','3:30 PM - 5:00 PM','Lab 2','Wednesday',2421,1),(64,'BS Information Technology','1stSemester','2ndYear','A','Dane Nalicat','GEM The Life and Works of Rizal (3 units)','8:30 AM - 9:30 AM','Room 3','Monday',2441,1),(65,'BS Information Technology','1stSemester','2ndYear','A','Dane Nalicat','GEM The Life and Works of Rizal (3 units)','8:30 AM - 9:30 AM','Room 3','Wednesday',2441,1),(66,'BS Information Technology','1stSemester','2ndYear','A','Dane Nalicat','CC 103 Computer Programming II (3 units)','9:30 AM - 12:00 PM','Room 3','Monday',2441,1),(67,'BS Information Technology','1stSemester','2ndYear','A','Dane Nalicat','CC 103 Computer Programming II (3 units)','9:30 AM - 12:00 PM','Room 3','Wednesday',2441,1),(68,'BS Information Technology','1stSemester','2ndYear','A','Dane Nalicat','CC 103 Computer Programming II (3 units)','9:30 AM - 12:00 PM','Lab 2','Tuesday',2441,1),(69,'BS Information Technology','1stSemester','2ndYear','A','Dane Nalicat','CC 103 Computer Programming II (3 units)','9:30 AM - 12:00 PM','Lab 2','Thursday',2441,1),(70,'BS Information Technology','1stSemester','2ndYear','B','Apple Escalante','PE 30IC Physical Activities Toward Health and Fitness 3 (2 units)','2:00 PM - 4:00 PM','Room 9','Thursday',2444,1),(71,'BS Information Technology','1stSemester','2ndYear','B','Eufemia Sion','MS 101 Discrete Mathematics (3 units)','10:30 AM - 12:00 PM','Room 4','Monday',2427,1),(72,'BS Information Technology','1stSemester','2ndYear','B','Eufemia Sion','MS 101 Discrete Mathematics (3 units)','10:30 AM - 12:00 PM','Room 4','Wednesday',2427,1),(73,'BS Information Technology','1stSemester','2ndYear','B','Kie Ann Josafat','GEC 3c The Contempory World (Peace Education) (3 units)','9:00 AM - 10:30 AM','Room 4','Monday',2438,1),(74,'BS Information Technology','1stSemester','2ndYear','B','Kie Ann Josafat','GEC 3c The Contempory World (Peace Education) (3 units)','9:00 AM - 10:30 AM','Room 4','Wednesday',2438,1),(75,'BS Information Technology','1stSemester','2ndYear','B','Katherine Uy','GEE 1S ASEAN Culture Studies (3 units)','12:30 PM - 2:00 PM','Room 3','Monday',2445,1),(76,'BS Information Technology','1stSemester','2ndYear','B','Katherine Uy','GEE 1S ASEAN Culture Studies (3 units)','12:30 PM - 2:00 PM','Room 3','Wednesday',2445,1),(77,'BS Information Technology','1stSemester','2ndYear','B','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','4:00 PM - 5:00 PM','Room 1','Monday',2421,1),(78,'BS Information Technology','1stSemester','2ndYear','B','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','4:00 PM - 5:00 PM','Room 1','Wednesday',2421,1),(79,'BS Information Technology','1stSemester','2ndYear','B','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','7:30 AM - 9:00 AM','Lab 2','Monday',2421,1),(80,'BS Information Technology','1stSemester','2ndYear','B','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','7:30 AM - 9:00 AM','Lab 2','Wednesday',2421,1),(81,'BS Information Technology','1stSemester','2ndYear','B','Kie Ann Josafat','GEM The Life and Works of Rizal (3 units)','7:30 AM - 9:00 AM','Room 4','Monday',2438,1),(82,'BS Information Technology','1stSemester','2ndYear','B','Kie Ann Josafat','GEM The Life and Works of Rizal (3 units)','7:30 AM - 9:00 AM','Room 4','Wednesday',2438,1),(83,'BS Information Technology','1stSemester','2ndYear','B','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','3:00 PM - 4:00 PM','Room 6','Monday',2425,1),(84,'BS Information Technology','1stSemester','2ndYear','B','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','3:00 PM - 4:00 PM','Room 6','Wednesday',2425,1),(85,'BS Information Technology','1stSemester','2ndYear','B','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','11:00 AM - 12:30 PM','Lab 2','Tuesday',2425,1),(86,'BS Information Technology','1stSemester','2ndYear','B','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','11:00 AM - 12:30 PM','Lab 2','Thursday',2425,1),(87,'BS Information Technology','1stSemester','2ndYear','C','Apple Escalante','PE 30IC Physical Activities Toward Health and Fitness 3 (2 units)','12:00 PM - 1:00 PM','Room 9','Tuesday',2444,1),(88,'BS Information Technology','1stSemester','2ndYear','C','Apple Escalante','PE 30IC Physical Activities Toward Health and Fitness 3 (2 units)','12:00 PM - 1:00 PM','Room 9','Thursday',2444,1),(89,'BS Information Technology','1stSemester','2ndYear','C','Eufemia Sion','MS 101 Discrete Mathematics (3 units)','9:00 AM - 11:00 AM','Room 5','Monday',2427,1),(90,'BS Information Technology','1stSemester','2ndYear','C','Eufemia Sion','MS 101 Discrete Mathematics (3 units)','9:00 AM - 11:00 AM','Room 5','Wednesday',2427,1),(91,'BS Information Technology','1stSemester','2ndYear','C','Kie Ann Josafat','GEC 3c The Contempory World (Peace Education) (3 units)','1:00 PM - 2:00 PM','Room 6','Tuesday',2438,1),(92,'BS Information Technology','1stSemester','2ndYear','C','Kie Ann Josafat','GEC 3c The Contempory World (Peace Education) (3 units)','1:00 PM - 2:00 PM','Room 6','Thursday',2438,1),(93,'BS Information Technology','1stSemester','2ndYear','C','Katherine Uy','GEE 1S ASEAN Culture Studies (3 units)','12:00 PM - 2:00 PM','Room 5','Tuesday',2445,1),(94,'BS Information Technology','1stSemester','2ndYear','C','Katherine Uy','GEE 1S ASEAN Culture Studies (3 units)','12:00 PM - 2:00 PM','Room 5','Thursday',2445,1),(95,'BS Information Technology','1stSemester','2ndYear','C','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','9:00 AM - 10:00 AM','Room 5','Tuesday',2421,1),(96,'BS Information Technology','1stSemester','2ndYear','C','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','9:00 AM - 10:00 AM','Room 5','Thursday',2421,1),(97,'BS Information Technology','1stSemester','2ndYear','C','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','7:00 AM - 8:30 AM','Lab 2','Tuesday',2421,1),(98,'BS Information Technology','1stSemester','2ndYear','C','Darwin M. Morana','ITE 1 IT Elective 1-Web Systems and Technologies (3 units)','7:00 AM - 8:30 AM','Lab 2','Thursday',2421,1),(99,'BS Information Technology','1stSemester','2ndYear','C','Kie Ann Josafat','GEM The Life and Works of Rizal (3 units)','11:00 AM - 12:30 PM','Room 5','Monday',2438,1),(100,'BS Information Technology','1stSemester','2ndYear','C','Kie Ann Josafat','GEM The Life and Works of Rizal (3 units)','11:00 AM - 12:30 PM','Room 5','Wednesday',2438,1),(101,'BS Information Technology','1stSemester','2ndYear','C','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','7:00 AM - 8:30 AM','Room 5','Monday',2425,1),(102,'BS Information Technology','1stSemester','2ndYear','C','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','7:00 AM - 8:30 AM','Room 5','Wednesday',2425,1),(103,'BS Information Technology','1stSemester','2ndYear','C','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','10:30 AM - 12:00 PM','Lab 2','Monday',2425,1),(104,'BS Information Technology','1stSemester','2ndYear','C','Daniel A. Bachillar','CC 103 Computer Programming II (3 units)','10:30 AM - 12:00 PM','Lab 2','Wednesday',2425,1),(105,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','12:30 PM - 1:30 PM','Room 11','Monday',2419,1),(106,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','12:30 PM - 1:30 PM','Room 11','Wednesday',2419,1),(107,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','2:00 PM - 3:30 PM','Lab 2','Tuesday',2419,1),(108,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','2:00 PM - 3:30 PM','Lab 2','Thursday',2419,1),(109,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','10:30 AM - 11:30 AM','Room 8','Monday',2419,1),(110,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','10:30 AM - 11:30 AM','Room 8','Wednesday',2419,1),(111,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','2:30 PM - 5:00 PM','Lab 1','Monday',2419,1),(112,'BS Information Technology','1stSemester','3rdYear','A','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','2:30 PM - 5:00 PM','Lab 1','Wednesday',2419,1),(113,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','9:00 AM - 11:30 AM','Lab 1','Tuesday',2431,1),(114,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','9:00 AM - 11:30 AM','Lab 1','Thursday',2431,1),(115,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','7:30 AM - 8:30 AM','Room 8','Monday',2431,1),(116,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','7:30 AM - 8:30 AM','Room 8','Wednesday',2431,1),(117,'BS Information Technology','1stSemester','3rdYear','A','Jio Erika Pelinio','EN 1 Scientific And Technical Writing (3 units)','7:30 AM - 9:00 AM','Room 1','Monday',2439,1),(118,'BS Information Technology','1stSemester','3rdYear','A','Jio Erika Pelinio','EN 1 Scientific And Technical Writing (3 units)','7:30 AM - 9:00 AM','Room 1','Wednesday',2439,1),(119,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','11:30 AM - 12:30 PM','Room 8','Monday',2431,1),(120,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','11:30 AM - 12:30 PM','Room 8','Wednesday',2431,1),(121,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','12:00 PM - 2:00 PM','Room 2','Tuesday',2431,1),(122,'BS Information Technology','1stSemester','3rdYear','A','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','12:00 PM - 2:00 PM','Room 2','Thursday',2431,1),(123,'BS Information Technology','1stSemester','3rdYear','A','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','9:00 AM - 10:30 AM','Lab 2','Monday',2414,1),(124,'BS Information Technology','1stSemester','3rdYear','A','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','9:00 AM - 10:30 AM','Lab 2','Wednesday',2414,1),(125,'BS Information Technology','1stSemester','3rdYear','A','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','10:30 AM - 11:30 AM','Room 7','Tuesday',2414,1),(126,'BS Information Technology','1stSemester','3rdYear','A','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','10:30 AM - 11:30 AM','Room 7','Thursday',2414,1),(127,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','7:30 AM - 8:30 AM','Room 9','Monday',2419,1),(128,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','7:30 AM - 8:30 AM','Room 9','Wednesday',2419,1),(129,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','9:30 AM - 10:30 AM','Room 3','Tuesday',2419,1),(130,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','9:30 AM - 10:30 AM','Room 3','Thursday',2419,1),(131,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','2:30 PM - 3:30 PM','Room 3','Tuesday',2419,1),(132,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','2:30 PM - 3:30 PM','Room 3','Thursday',2419,1),(133,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','3:30 PM - 5:00 PM','Lab 3','Tuesday',2419,1),(134,'BS Information Technology','1stSemester','3rdYear','B','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','3:30 PM - 5:00 PM','Lab 3','Thursday',2419,1),(135,'BS Information Technology','1stSemester','3rdYear','B','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','11:30 AM - 12:30 PM','Room 11','Tuesday',2431,1),(136,'BS Information Technology','1stSemester','3rdYear','B','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','11:30 AM - 12:30 PM','Room 11','Thursday',2431,1),(137,'BS Information Technology','1stSemester','3rdYear','B','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','11:00 AM - 2:00 PM','Lab 3','Friday',2431,1),(138,'BS Information Technology','1stSemester','3rdYear','B','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','9:00 AM - 11:00 AM','Room 4','Tuesday',2431,1),(139,'BS Information Technology','1stSemester','3rdYear','B','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','9:00 AM - 11:00 AM','Room 4','Thursday',2431,1),(140,'BS Information Technology','1stSemester','3rdYear','B','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','7:30 AM - 10:00 AM','Lab 3','Friday',2431,1),(141,'BS Information Technology','1stSemester','3rdYear','B','Jio Erika Pelinio','EN 1 Scientific And Technical Writing (3 units)','7:30 AM - 9:00 AM','Room 5','Tuesday',2439,1),(142,'BS Information Technology','1stSemester','3rdYear','B','Jio Erika Pelinio','EN 1 Scientific And Technical Writing (3 units)','7:30 AM - 9:00 AM','Room 5','Thursday',2439,1),(143,'BS Information Technology','1stSemester','3rdYear','B','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','12:30 PM - 1:30 PM','Room 7','Monday',2414,1),(144,'BS Information Technology','1stSemester','3rdYear','B','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','12:30 PM - 1:30 PM','Room 7','Wednesday',2414,1),(145,'BS Information Technology','1stSemester','3rdYear','B','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','2:00 PM - 3:30 PM','Lab 3','Monday',2414,1),(146,'BS Information Technology','1stSemester','3rdYear','B','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','2:00 PM - 3:30 PM','Lab 3','Wednesday',2414,1),(147,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','9:30 AM - 10:30 AM','Room 7','Monday',2419,1),(148,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','9:30 AM - 10:30 AM','Room 7','Wednesday',2419,1),(149,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','12:30 PM - 2:00 PM','Room 1','Monday',2419,1),(150,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','ITP Integrative Programming Technologies 1 (3 units)','12:30 PM - 2:00 PM','Room 1','Wednesday',2419,1),(151,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','8:30 AM - 9:30 AM','Room 8','Monday',2419,1),(152,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','8:30 AM - 9:30 AM','Room 8','Wednesday',2419,1),(153,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','11:00 AM - 12:30 PM','Lab 3','Monday',2419,1),(154,'BS Information Technology','1stSemester','3rdYear','C','Fiel M. Dullas','PF 102 Event Driven Programming (3 units)','11:00 AM - 12:30 PM','Lab 3','Wednesday',2419,1),(155,'BS Information Technology','1stSemester','3rdYear','C','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','2:00 PM - 5:00 PM','Lab 1','Friday',2431,1),(156,'BS Information Technology','1stSemester','3rdYear','C','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','10:30 AM - 11:30 AM','Room 1','Tuesday',2431,1),(157,'BS Information Technology','1stSemester','3rdYear','C','Joseph S. Cortez','ITE 3 IT Elective 3 Platform Technologies (3 units)','10:30 AM - 11:30 AM','Room 1','Thursday',2431,1),(158,'BS Information Technology','1stSemester','3rdYear','C','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','2:30 PM - 3:30 PM','Room 2','Tuesday',2431,1),(159,'BS Information Technology','1stSemester','3rdYear','C','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','2:30 PM - 3:30 PM','Room 2','Thursday',2431,1),(160,'BS Information Technology','1stSemester','3rdYear','C','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','3:30 PM - 5:00 PM','Lab 1','Tuesday',2431,1),(161,'BS Information Technology','1stSemester','3rdYear','C','Joseph S. Cortez','GDDAT Game Development and Digital Animation Technology (3 units)','3:30 PM - 5:00 PM','Lab 1','Thursday',2431,1),(162,'BS Information Technology','1stSemester','3rdYear','C','Jio Erika Pelinio','EN 1 Scientific And Technical Writing (3 units)','9:00 AM - 10:30 AM','Room 1','Tuesday',2439,1),(163,'BS Information Technology','1stSemester','3rdYear','C','Jio Erika Pelinio','EN 1 Scientific And Technical Writing (3 units)','9:00 AM - 10:30 AM','Room 1','Thursday',2439,1),(164,'BS Information Technology','1stSemester','3rdYear','C','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','7:30 AM - 8:30 AM','Room 7','Monday',2414,1),(165,'BS Information Technology','1stSemester','3rdYear','C','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','7:30 AM - 8:30 AM','Room 7','Wednesday',2414,1),(166,'BS Information Technology','1stSemester','4thYear','A','Katherine Uy','FLBG Foreign Language (3 units)','10:30 AM - 11:30 AM','Room 9','Monday',2445,1),(167,'BS Information Technology','1stSemester','4thYear','A','Katherine Uy','FLBG Foreign Language (3 units)','10:30 AM - 11:30 AM','Room 9','Wednesday',2445,1),(174,'BS Information Technology','1stSemester','3rdYear','C','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','3:30 PM - 5:00 PM','Lab 1','Monday',2414,1),(175,'BS Information Technology','1stSemester','3rdYear','C','Hansel S. Ada','IM 101 Advance Database Systems (3 units)','3:30 PM - 5:00 PM','Lab 1','Wednesday',2414,1),(176,'BS Information Technology','1stSemester','4thYear','A','Darly John Ragadio','SA 101 System Administrator and Maintenance (3 units)','4:00 PM - 5:00 PM','Room 8','Monday',2426,1),(177,'BS Information Technology','1stSemester','4thYear','A','Darly John Ragadio','SA 101 System Administrator and Maintenance (3 units)','4:00 PM - 5:00 PM','Room 8','Wednesday',2426,1),(178,'BS Information Technology','1stSemester','4thYear','A','Darly John Ragadio','SA 101 System Administrator and Maintenance (3 units)','9:30 AM - 10:00 AM','Lab 3','Monday',2426,1),(179,'BS Information Technology','1stSemester','4thYear','A','Darly John Ragadio','SA 101 System Administrator and Maintenance (3 units)','9:30 AM - 10:00 AM','Lab 3','Wednesday',2426,1),(180,'BS Information Technology','1stSemester','4thYear','A','Geoffrey S. Sepillo','CAP 102 Capstone Project and Research 2 (3 units)','3:30 PM - 5:00 PM','Room 3','Monday',2413,1),(181,'BS Information Technology','1stSemester','4thYear','A','Geoffrey S. Sepillo','CAP 102 Capstone Project and Research 2 (3 units)','3:30 PM - 5:00 PM','Room 3','Wednesday',2413,1);
+/*!40000 ALTER TABLE `schedule` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-11-21 10:52:12
